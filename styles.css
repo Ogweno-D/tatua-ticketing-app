@@ -1,0 +1,415 @@
+@font-face {
+    font-family: 'Lexend Deca';
+    src: url('assets/fonts/LexendDeca-VariableFont_wght.ttf') format('truetype');
+    font-style: normal;
+    font-display: swap;
+}
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body{
+    background-color: #f5f5f5;
+    font-family: 'Lexend Deca', sans-serif;
+    font-size: 16px;
+    width: 100%;
+}
+.header{
+    background-color: #2f243a;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    color: white;
+    padding: .8em;
+}
+.navbar{
+    display: flex;
+    align-items:center ;
+    justify-content: space-between;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+.navbar-brand{
+    display: flex;
+    align-items: center;
+    gap:.5rem;
+    flex-shrink: 0;
+}
+.logo-img{
+    width: 40px;
+    height: auto;
+    object-fit: contain;
+}
+.brand-name{
+    font-size: 2rem;
+    font-weight: 700;
+    color: white;
+}
+
+/* Navigation links*/
+.navbar-nav{
+    display: none;
+    list-style: none;
+    gap: 1rem;
+    flex-direction: column;
+    background-color: #2f243a;
+    padding: 1rem;
+    margin: 0;
+}
+.navbar-nav.show{
+    display: flex;
+}
+.nav-link{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    list-style: none;
+    margin: auto 2rem;
+    padding: 1em;
+}
+.nav-link a{
+    text-align: center;
+    color: white;
+}
+.nav-link a{
+    color: white;
+}
+.nav-link a:hover{
+    color: white;
+}
+.nav-link a.active{
+    color: #a46860
+}
+
+/* Mobile menu*/
+.mobile-menu-btn {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+    width: 30px;        /* slightly bigger for touch friendliness */
+    height: 22px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    padding: 4px;
+    flex-shrink: 0;
+    transition: transform 0.3s ease;
+}
+
+.mobile-menu-btn span {
+    width: 100%;
+    height: 3px;
+    background-color: hsl(0, 0%, 90%);
+    border-radius: 4px;   /* smooth edges */
+    box-shadow: 0 1px 2px rgba(0,0,0,0.15);
+    transition: all 0.3s ease;
+}
+
+/* Hover effect */
+.mobile-menu-btn:hover span {
+    background-color: hsl(0, 0%, 100%);
+    transform: scaleX(1.1);
+}
+
+/* When active toggle (hamburger → X) */
+.mobile-menu-btn.active span:nth-child(1) {
+    transform: rotate(45deg) translateY(8px);
+}
+
+.mobile-menu-btn.active span:nth-child(2) {
+    opacity: 0; /* hide the middle bar */
+}
+
+.mobile-menu-btn.active span:nth-child(3) {
+    transform: rotate(-45deg) translateY(-8px);
+}
+
+/* Home */
+.form-section-msg{
+    font-size:1rem;
+    font-weight: 400;
+    color: hsl(0, 1%, 44%);
+    margin-bottom: 1rem;
+}
+.form-section{
+    padding: 1em;
+    margin: 1rem;
+}
+.form-row{
+    margin-bottom: 1rem;
+}
+.form-label{
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
+
+.form-check{
+    margin:0  1rem;
+}
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="tel"],
+input[type="url"],
+input[type="number"],
+select,
+textarea {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid #e1e5e9;
+    border-radius: 6px;
+    font-size: 16px;
+    font-family: inherit;
+    background-color: #fff;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    outline: none;
+    border-color: hsl(270, 50%, 40%);
+    box-shadow: 0 0 0 3px  hsl(270, 50%, 90%);
+}
+
+input[type="file"] {
+    border: 2px solid #ccc;
+    padding: .5em;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 500
+}
+
+input[type="checkbox"],
+input[type="radio"] {
+    accent-color: rebeccapurple; /* Modern browsers */
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+input[type="checkbox"]:hover,
+input[type="radio"]:hover{
+    cursor: pointer;
+}
+
+.btn{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: hsl(270, 23%, 40%);
+    padding: .5em 1em;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size:1rem;
+    font-weight: 500;
+    border-radius: 20px;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+}
+.btn:hover{
+    background-color: white;
+    color: black;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+/* Hide table header on mobile */
+thead {
+    display: none;
+}
+
+tr {
+    display: block;
+    background: #fff;
+    margin-bottom: 1rem;
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+td {
+    display: block;
+    padding: 0.4rem 0;
+    font-size: 0.9rem;
+}
+
+/* Add labels before table data */
+td::before {
+    content: attr(data-label);
+    font-weight: bold;
+    display: block;
+    margin-bottom: 0.2rem;
+    color: #555;
+}
+
+/* Action icons */
+.actions {
+    display: flex;
+    gap: 0.8rem;
+    margin-top: 0.6rem;
+}
+
+.actions i {
+    font-size: 1.1rem;
+    cursor: pointer;
+}
+
+.actions .fa-trash-alt { color: #dc3545; }
+
+/* Top bar */
+.top {
+    display: flex;
+    align-items: flex-end;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+    color: #007bff;
+    cursor: pointer;
+}
+
+.top i {
+    font-size: 1.2rem;
+}
+
+/* Tickets*/
+/* Base table reset */
+.tickets-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+/* Hide thead by default (mobile view uses card style) */
+.tickets-table thead {
+    display: none;
+}
+
+/* Each row looks like a card */
+.tickets-table tr {
+    display: block;
+    margin: 0.5rem 0;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 0.75rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+/* Each cell stacks with labels */
+.tickets-table td {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.25rem 0;
+    font-size: 0.9rem;
+}
+
+.tickets-table td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    margin-right: 0.5rem;
+    color: #444;
+}
+
+/* Status labels */
+.status {
+    display: inline-block;
+    padding: 0.2rem 0.6rem;
+    font-size: 0.75rem;
+    border-radius: 999px;
+    font-weight: 600;
+    text-transform: capitalize;
+}
+
+.status.open {
+    background: #e6f4ea;
+    color: #2e7d32;
+}
+
+.status.closed {
+    background: #ffebee;
+    color: #c62828;
+}
+
+.status.pending {
+    background: #fff3e0;
+    color: #ef6c00;
+}
+
+/* Action icons */
+.actions i {
+    margin-left: 0.4rem;
+    cursor: pointer;
+    color: #666;
+}
+.actions .delete { color: #e63946; }
+
+
+.actions i:hover {
+    color: #000;
+}
+
+/* Tablet: 768px and larger */
+@media (min-width: 768px) {
+    .header {
+        display: flex;
+        align-items: flex-start;
+    }
+
+    .navbar-nav {
+        display: flex;
+        gap: 1rem;
+        flex-direction: row;
+    }
+
+    .mobile-menu-btn {
+        display: none
+    }
+
+    /* Tickets*/
+    .tickets-table {
+        border: 1px solid #ddd;
+    }
+
+    .tickets-table thead {
+        display: table-header-group;
+        background: #f9f9f9;
+    }
+
+    .tickets-table tr {
+        display: table-row;
+        border: none;
+        border-radius: 0;
+        box-shadow: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    .tickets-table td,
+    .tickets-table th {
+        display: table-cell;
+        padding: 0.75rem;
+        border-bottom: 1px solid #eee;
+        text-align: left;
+    }
+
+    /* Remove data-labels in table view */
+    .tickets-table td::before {
+        content: none;
+    }
+}
+
+/* Desktop: 1200px and larger */
+@media (min-width: 1200px) {
+    .header {
+        font-size: 1.125rem;
+    }
+
+}
