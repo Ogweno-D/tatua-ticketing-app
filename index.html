@@ -9,19 +9,21 @@
 <body>
 <header class="header">
     <nav class="navbar">
-        <div class="navbar-brand">
-            <img class="logo-img" src="./assets/images/logo.png" alt="Logo Image">
-            <h1 class="brand-name">Tatua</h1>
+        <div class="trial-nav">
+            <div class="navbar-brand">
+                <img class="logo-img" src="./assets/images/logo.png" alt="Logo Image">
+                <h1 class="brand-name">Tatua</h1>
+            </div>
+            <!--    Navigation -->
+            <ul class="navbar-nav" id="navbar-menu">
+                <li class="nav-link ">
+                    <a class="" href="#" >Raise Ticket</a>
+                </li>
+                <li class="nav-link">
+                    <a href="tickets.html">Ticket List</a>
+                </li>
+            </ul>
         </div>
-        <!--    Navigation -->
-        <ul class="navbar-nav" id="navbar-menu">
-            <li class="nav-link ">
-                <a class="" href="#" >Raise Ticket</a>
-            </li>
-            <li class="nav-link">
-                <a href="tickets.html">Ticket List</a>
-            </li>
-        </ul>
 <!--        Mobile menu-->
         <button class="mobile-menu-btn"  id="menuBtn" aria-label="toggle menu">
             <span></span>
@@ -71,6 +73,7 @@
 
             <div class="form-row">
                 <label class="form-label">Preferred Contact:</label>
+
                 <label class="form-check">
                     <input type="radio" name="contact" id="email-contact" value="email">
                     Email
@@ -88,7 +91,7 @@
             </div>
 
             <div class="t-c">
-                <label>
+                <label class="">
                     <input type="checkbox" name="terms" id="terms" value="Agree">
                     I agree to the <a>Terms and Conditions </a>
                 </label>

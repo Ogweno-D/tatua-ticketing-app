@@ -6,14 +6,18 @@ document.getElementById("menuBtn").addEventListener("click", function() {
 // For the active nav links
 // Select all links inside navbar
 const navLinks = document.querySelectorAll('.nav-link a');
-navLinks.forEach(link => {
-    link.addEventListener('click', function() {
-        // Remove active from all
-        navLinks.forEach(l => l.classList.remove('active'));
+const currentPage = window.location.pathname;
+// console.log(currentPage);
 
-        // Add active to clicked one
-        this.classList.add('active');
-    });
+navLinks.forEach(link => {
+// Remove active from all links just in case
+    link.classList.remove('active');
+
+// If link's href matches current page, add active
+    const linkPath = new URL(link.href).pathname;
+    if (linkPath === currentPage) {
+        link.classList.add('active');
+    }
 });
 
 

@@ -37,7 +37,6 @@ p{
     display: flex;
     align-items:center ;
     justify-content: space-between;
-    max-width: 1200px;
     margin: 0 auto;
 }
 .navbar-brand{
@@ -165,6 +164,8 @@ input[type="password"],
 input[type="tel"],
 input[type="url"],
 input[type="number"],
+input[type="radio"],
+input[type="checkbox"],
 select,
 textarea {
     width: 100%;
@@ -206,17 +207,40 @@ input[type="radio"]:hover{
     cursor: pointer;
 }
 
-.t-c{
+.t-c {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 1rem;
+}
 
-    text-align: left;
+.t-c label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    font-size: 0.95rem;
+}
+
+.t-c input[type="checkbox"] {
+    margin-right: 1em;
+    width: 16px;
+    height: 16px;
+}
+
+.t-c .error-message {
+    color: red;
+    font-size: 0.85rem;
+    margin-top: 4px;
 }
 .t-c a{
-    text-decoration: none;
+    text-decoration: underline;
     color: rgba(66, 50, 117, 0.9);
+    cursor: pointer;
+    margin-left: .2em;
+
 }
 .t-c a:hover{
     color: hsl(270, 50%, 50%);
-    text-decoration: underline;
+    text-decoration: none;
 }
 
 .btn{
@@ -302,6 +326,7 @@ td::before {
     cursor: pointer;
     font-size: 1.3rem;
     color: rebeccapurple;
+    margin: 0.5rem 2rem;
 }
 .refresh-icon a {
     text-decoration: none;
@@ -411,7 +436,7 @@ td::before {
 .modal-content {
     background: #fff;
     margin: auto;
-    padding: 20px;
+    padding: 1.5em;
     border-radius: 12px;
     width: 60%;
     max-width: 600px;
@@ -420,7 +445,8 @@ td::before {
 .close {
     color: #333;
     float: right;
-    font-size: 28px;
+    border: 2px solid lightgray;
+    font-size:2rem;
     cursor: pointer;
 }
 
@@ -442,14 +468,32 @@ td::before {
 /* Tablet: 768px and larger */
 @media (min-width: 768px) {
     .header {
+
+    }
+    .trial-nav{
         display: flex;
-        align-items: flex-start;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem;
+    }
+    .navbar-brand{
+        align-items: center;
     }
 
     .navbar-nav {
         display: flex;
-        gap: 1rem;
         flex-direction: row;
+        margin: auto 3rem;
+        padding: 0;
+    }
+    .nav-link{
+        padding:1em .6em;
+        margin:0;
+        font-size: 1.2rem;
+    }
+    .nav-link a:hover{
+        color: #a683ca;
+        text-decoration: none;
     }
 
     .mobile-menu-btn {
@@ -478,6 +522,12 @@ td::before {
     .form-label{
         display: inline-block;
     }
+
+    .form-check{
+        display: flex;
+        max-width: 100px;
+        margin: auto .8rem;
+    }
     tr {
         display: block;
         background: none;
@@ -486,6 +536,11 @@ td::before {
     }
 
     /* Tickets*/
+    .tickets-container{
+        width: 100%;
+        margin:auto;
+        padding: 2em;
+    }
     .tickets-table {
         border:none;
     }
@@ -502,8 +557,15 @@ td::before {
         box-shadow: none;
         }
     }
-    .tickets-table td,
-    .tickets-table th {
+    .tickets-table th{
+        font-size: 1.5rem;
+        font-weight: 600;
+        display: table-cell;
+        border-bottom: 4px solid hsl(270, 23%, 40%);
+        text-align: left;
+    }
+
+    .tickets-table td {
         display: table-cell;
         padding: 0.75rem;
         border-bottom: 1px solid hsl(0, 20%, 94%);
