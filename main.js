@@ -17,7 +17,7 @@ navLinks.forEach(link => {
 });
 
 
-// // Task 1
+
 document.addEventListener("DOMContentLoaded", () => {
     const form = document.getElementById("ticketForm");
     const tableBody = document.querySelector("#ticketsTable tbody");
@@ -25,15 +25,17 @@ document.addEventListener("DOMContentLoaded", () => {
     const closeBtn = document.querySelectorAll(".close");
 
     // Submissions
-    let submissions = [];
-    let submissionCounter = 0;
+    let submissions = JSON.parse(sessionStorage.getItem("submissions")) || [];
+    let submissionCounter = 1;
 
 
     if(form){
         const inputs = form.querySelectorAll("input,textarea,select");
+
         // Form Validation
         function validateField(field) {
             let valid = true;
+
             const errorElement = document.getElementById(field.id +"Error");
             if (!errorElement) return true;
 
@@ -55,7 +57,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             // Phone
             if (field.id === "phone") {
-                const phoneRegex = /^[0-9]{10,15}$/;
+                const phoneRegex = /^\+?[0-9]{10,15}$/;
                 if (!phoneRegex.test(field.value.trim())) {
                     errorElement.textContent = "Enter a valid phone number (10–15 digits).";
                     valid = false;
@@ -168,8 +170,8 @@ document.addEventListener("DOMContentLoaded", () => {
             date: new Date().toLocaleString(),
             terms: true
         }
-
         submissions.push(submission);
+        sessionStorage.setItem("submissions", JSON.stringify(submissions));
         console.log(JSON.stringify(submissions));
         form.reset();
         alert("Ticket Submitted Successfully");
@@ -181,11 +183,11 @@ document.addEventListener("DOMContentLoaded", () => {
          function renderTable() {
             tableBody.innerHTML = "";
 
-            submissions.forEach(((submission, index) => {
+            submissions.forEach(((submission) => {
                 const row = document.createElement("tr");
 
                 row.innerHTML = `
-            <td>${index + 1}</td>
+            <td>${submission.id}</td>
                 <td>
                     <p class="user-name">${submission.fullName}</p>
                     <p class="user-email">${submission.email}</p>
@@ -226,7 +228,9 @@ document.addEventListener("DOMContentLoaded", () => {
         function actionHandlers() {
             document.querySelectorAll(".info").forEach(icon => {
                 icon.addEventListener("click", (e) => {
-                    const sub = submissions[e.target.dataset.id];
+                    const id = parseInt(e.target.dataset.id);
+                    const index = submissions.findIndex(sub => sub.id === id);
+                    const sub = submissions[index]
                     openModal(`
                 <h3 class="info-header">Ticket Info</h3>
                 <p class="info-item"><b>Name:</b> ${sub.fullName}</p>
@@ -241,7 +245,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
             document.querySelectorAll(".call").forEach(icon => {
                 icon.addEventListener("click", (e) => {
-                    const sub = submissions[e.target.dataset.id];
+                    const id = parseInt(e.target.dataset.id);
+                    const index = submissions.findIndex(sub => sub.id === id);
+                    const sub = submissions[index]
                     openModal(`<h3 class="info-header">Call</h3>
                                    <p class="info-item">Dialing <b>${sub.fullName}</b> at <b>${sub.phone || "N/A"}</b></p>
                            `);
@@ -250,7 +256,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
             document.querySelectorAll(".message").forEach(icon => {
                 icon.addEventListener("click", (e) => {
-                    const sub = submissions[e.target.dataset.id];
+                    const id = parseInt(e.target.dataset.id);
+                    const index = submissions.findIndex(sub => sub.id === id);
+                    const sub = submissions[index]
                     openModal(`
                 <h3 class="info-header">Send Message</h3>
                 <p class="info-item">To: <b>${sub.email}</b></p>
@@ -272,10 +280,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
             document.querySelectorAll(".edit").forEach(icon => {
                 icon.addEventListener("click", (e) => {
-                    const id = e.target.dataset.id;
-                    const sub = submissions[id];
+                    const id = parseInt(e.target.dataset.id);
+                    const index = submissions.findIndex(sub => sub.id === id);
+                    const sub = submissions[index];
                     openModal(`
-                       <h3>Edit Ticket</h3>
+                       <h3 class="info-header">Edit Ticket</h3>
                        <form id="editTicketForm">
                             <div class="form-row">
                                 <label class="form-label" for="editName">Full Name:</label>
@@ -338,7 +347,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         submissions[id].subject = document.getElementById("editSubject").value;
                         submissions[id].message = document.getElementById("editMessage").value;
                         submissions[id].status = document.getElementById("editStatus").value;
-                        submissions.push(submissions);
+                        sessionStorage.setItem("submissions", JSON.stringify(submissions));
                         renderTable();
                         modal.style.display = "none";
                     };
@@ -347,7 +356,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
             document.querySelectorAll(".download").forEach(icon => {
                 icon.addEventListener("click", (e) => {
-                    const sub = submissions[e.target.dataset.id];
+                    const id = parseInt(e.target.dataset.id);
+                    const index = submissions.findIndex(sub => sub.id === id);
+                    const sub = submissions[index];
+
                     const content = `
                         Ticket Info:
                         Name: ${sub.fullName}
@@ -362,13 +374,34 @@ document.addEventListener("DOMContentLoaded", () => {
 
                     const a = document.createElement("a");
                     a.href = url;
-                    a.download = `ticket_${sub.fullName}.txt`;
+                    a.download = `ticket_${sub.fullName.replace(/\s+/g, "_")}.txt`;
                     document.body.appendChild(a);
                     a.click();
                     document.body.removeChild(a);
                     URL.revokeObjectURL(url);
                 });
             });
+
+            document.querySelectorAll(".delete").forEach(icon => {
+                icon.addEventListener("click", (e) => {
+                    const id = parseInt(e.target.dataset.id);
+                    const confirmed = confirm("Are you sure you want to delete this?")
+                    if (confirmed) {
+                        // Find the index of the item with this ID
+                        const index = submissions.findIndex(sub => sub.id === id);
+
+                        // Non-negative index
+                        if (index !== -1) {
+                            submissions.splice(index, 1); // remove that item
+                            sessionStorage.setItem("submissions", JSON.stringify(submissions));
+                            renderTable();
+                            alert("Ticket deleted successfully!");
+                        } else {
+                            alert("Ticket not found!");
+                        }
+                    }
+                })
+            })
         }
 
         // Close modals
