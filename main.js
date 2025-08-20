@@ -18,6 +18,8 @@ navLinks.forEach(link => {
 
 
 
+
+// Storage
 document.addEventListener("DOMContentLoaded", () => {
     const form = document.getElementById("ticketForm");
     const tableBody = document.querySelector("#ticketsTable tbody");
@@ -180,6 +182,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Table Page
     if(tableBody){
+        //  For the refresh icon
+        document.querySelector(".refresh-icon").addEventListener("click", event => {
+            event.preventDefault();
+            event.stopPropagation();
+
+            location.reload();
+        })
          function renderTable() {
             tableBody.innerHTML = "";
 
@@ -187,7 +196,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 const row = document.createElement("tr");
 
                 row.innerHTML = `
-            <td>${submission.id}</td>
+                <td>${submission.id}</td>
                 <td>
                     <p class="user-name">${submission.fullName}</p>
                     <p class="user-email">${submission.email}</p>
@@ -318,11 +327,11 @@ document.addEventListener("DOMContentLoaded", () => {
                             <div class="form-row">
                                 <label class="form-label" for="editContact">Preferred Contact:</label>
                                 <label class="form-check">
-                                    <input type="radio" name="contact" value="Email" ${sub.contact==="email"?"checked":""}>
+                                    <input type="radio" name="contact" value="email" ${sub.contact==="email"?"checked":""}>
                                     Email
                                 </label>
                                 <label class="form-check">
-                                    <input type="radio" name="contact" value="Phone" ${sub.contact==="phone"?"checked":""}>
+                                    <input type="radio" name="contact" value="phone" ${sub.contact==="phone"?"checked":""}>
                                     Phone
                                 </label>
                             </div>
@@ -342,15 +351,19 @@ document.addEventListener("DOMContentLoaded", () => {
                         </form>
                         `);
                     document.getElementById("saveEdit").onclick = () => {
-                        submissions[id].fullName = document.getElementById("editName").value;
-                        submissions[id].email = document.getElementById("editEmail").value;
-                        submissions[id].subject = document.getElementById("editSubject").value;
-                        submissions[id].message = document.getElementById("editMessage").value;
-                        submissions[id].status = document.getElementById("editStatus").value;
+                        const id = parseInt(e.target.dataset.id);
+                        const index = submissions.findIndex(sub => sub.id === id);
+                        submissions[index].fullName = document.getElementById("editName").value;
+                        submissions[index].email = document.getElementById("editEmail").value;
+                        submissions[index].subject = document.getElementById("editSubject").value;
+                        submissions[index].message = document.getElementById("editMessage").value;
+                        submissions[index].status = document.getElementById("editStatus").value;
+                        submissions[index].contact = document.querySelector('input[name="contact"]:checked').value;
                         sessionStorage.setItem("submissions", JSON.stringify(submissions));
                         renderTable();
                         modal.style.display = "none";
                     };
+
                 });
             });
 
@@ -361,13 +374,16 @@ document.addEventListener("DOMContentLoaded", () => {
                     const sub = submissions[index];
 
                     const content = `
-                        Ticket Info:
-                        Name: ${sub.fullName}
-                        Email: ${sub.email}
-                        Subject: ${sub.subject}
-                        Message: ${sub.message}
-                        Status: ${sub.status}
-                        Date: ${sub.date}
+                        <div class="ticket-card">
+                          <h3>🎟️ Ticket #${sub.id}</h3>
+                          <p><strong>Name:</strong> ${sub.fullName}</p>
+                          <p><strong>Email:</strong> ${sub.email}</p>
+                          <p><strong>Subject:</strong> ${sub.subject}</p>
+                          <p><strong>Message:</strong> ${sub.message}</p>
+                          <p><strong>Status:</strong> <span class="status ${sub.status.toLowerCase()}">${sub.status}</span></p>
+                          <p><strong>Date:</strong> ${sub.date}</p>
+                        </div>
+
                     `;
                     const blob = new Blob([content], { type: "text/plain" });
                     const url = URL.createObjectURL(blob);
