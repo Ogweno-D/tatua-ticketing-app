@@ -17,7 +17,7 @@ navLinks.forEach(link => {
 });
 
 
-// // Task 1
+
 document.addEventListener("DOMContentLoaded", () => {
     const form = document.getElementById("ticketForm");
     const tableBody = document.querySelector("#ticketsTable tbody");
@@ -25,8 +25,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const closeBtn = document.querySelectorAll(".close");
 
     // Submissions
-    let submissions = [];
-    let submissionCounter = 0;
+    let submissions = JSON.parse(sessionStorage.getItem("submissions")) || [];
+    let submissionCounter = 1;
 
 
     if(form){
@@ -168,8 +168,8 @@ document.addEventListener("DOMContentLoaded", () => {
             date: new Date().toLocaleString(),
             terms: true
         }
-
         submissions.push(submission);
+        sessionStorage.setItem("submissions", JSON.stringify(submissions));
         console.log(JSON.stringify(submissions));
         form.reset();
         alert("Ticket Submitted Successfully");
@@ -181,11 +181,11 @@ document.addEventListener("DOMContentLoaded", () => {
          function renderTable() {
             tableBody.innerHTML = "";
 
-            submissions.forEach(((submission, index) => {
+            submissions.forEach(((submission) => {
                 const row = document.createElement("tr");
 
                 row.innerHTML = `
-            <td>${index + 1}</td>
+            <td>${submission.id}</td>
                 <td>
                     <p class="user-name">${submission.fullName}</p>
                     <p class="user-email">${submission.email}</p>
@@ -338,7 +338,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         submissions[id].subject = document.getElementById("editSubject").value;
                         submissions[id].message = document.getElementById("editMessage").value;
                         submissions[id].status = document.getElementById("editStatus").value;
-                        submissions.push(submissions);
+                        sessionStorage.setItem("submissions", JSON.stringify(submissions));
                         renderTable();
                         modal.style.display = "none";
                     };
@@ -369,6 +369,27 @@ document.addEventListener("DOMContentLoaded", () => {
                     URL.revokeObjectURL(url);
                 });
             });
+
+            document.querySelectorAll(".delete").forEach(icon => {
+                icon.addEventListener("click", (e) => {
+                    const id = parseInt(e.target.dataset.id);
+                    const confirmed = confirm("Are you sure you want to delete this?")
+                    if (confirmed) {
+                        // Find the index of the item with this ID
+                        const index = submissions.findIndex(sub => sub.id === id);
+
+                        // Non-negative index
+                        if (index !== -1) {
+                            submissions.splice(index, 1); // remove that item
+                            sessionStorage.setItem("submissions", JSON.stringify(submissions));
+                            renderTable();
+                            alert("Ticket deleted successfully!");
+                        } else {
+                            alert("Ticket not found!");
+                        }
+                    }
+                })
+            })
         }
 
         // Close modals
