@@ -16,6 +16,15 @@ body{
     font-size: 16px;
     width: 100%;
 }
+h1{
+    font-size:1.5rem;
+    line-height: 1.5;
+}
+p{
+    font-size:1.2rem;
+    line-height: 1.2;
+}
+
 .header{
     background-color: hsl(270, 23%, 18%);
     position: sticky;
@@ -197,6 +206,19 @@ input[type="radio"]:hover{
     cursor: pointer;
 }
 
+.t-c{
+
+    text-align: left;
+}
+.t-c a{
+    text-decoration: none;
+    color: rgba(66, 50, 117, 0.9);
+}
+.t-c a:hover{
+    color: hsl(270, 50%, 50%);
+    text-decoration: underline;
+}
+
 .btn{
     display: inline-flex;
     align-items: center;
@@ -254,12 +276,12 @@ td::before {
 /* Action icons */
 .actions {
     display: flex;
-    gap: 0.8rem;
+    gap: 2rem;
     margin-top: 0.6rem;
 }
 
 .actions i {
-    font-size: 1.1rem;
+    font-size: 1.2rem;
     cursor: pointer;
 }
 

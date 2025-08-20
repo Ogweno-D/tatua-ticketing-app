@@ -27,7 +27,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const closeBtn = document.querySelectorAll(".close");
 
     // Submissions
-    let submissions = JSON.parse(sessionStorage.getItem("submissions")) || [];
+    let submissions = JSON.parse(localStorage.getItem("submissions")) || [];
     let submissionCounter = 1;
 
 
@@ -173,7 +173,7 @@ document.addEventListener("DOMContentLoaded", () => {
             terms: true
         }
         submissions.push(submission);
-        sessionStorage.setItem("submissions", JSON.stringify(submissions));
+        localStorage.setItem("submissions", JSON.stringify(submissions));
         console.log(JSON.stringify(submissions));
         form.reset();
         alert("Ticket Submitted Successfully");
@@ -359,7 +359,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         submissions[index].message = document.getElementById("editMessage").value;
                         submissions[index].status = document.getElementById("editStatus").value;
                         submissions[index].contact = document.querySelector('input[name="contact"]:checked').value;
-                        sessionStorage.setItem("submissions", JSON.stringify(submissions));
+                        localStorage.setItem("submissions", JSON.stringify(submissions));
                         renderTable();
                         modal.style.display = "none";
                     };
@@ -409,7 +409,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         // Non-negative index
                         if (index !== -1) {
                             submissions.splice(index, 1); // remove that item
-                            sessionStorage.setItem("submissions", JSON.stringify(submissions));
+                            localStorage.setItem("submissions", JSON.stringify(submissions));
                             renderTable();
                             alert("Ticket deleted successfully!");
                         } else {
