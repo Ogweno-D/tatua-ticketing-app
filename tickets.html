@@ -40,7 +40,7 @@
 
 <!--    Tickets-->
     <div class="tickets-container">
-        <table class="tickets-table">
+        <table id="ticketsTable" class="tickets-table">
             <thead>
             <tr>
                 <th>Ticket Id</th>
@@ -51,37 +51,16 @@
                 <th>Actions</th>
             </tr>
             </thead>
-            <tbody>
-            <tr>
-                <td data-label="Ticket Id">1</td>
-                <td data-label="Raised by">
-                    <p class="user-name">John Doe</p>
-                    <p class="user-email">john-doe@gmail.com</p>
-                </td>
-                <td data-label="Ticket Details">
-                    <p class="message-title">Mobile App is slow</p>
-                    <p class="user-message">The mobile app is taking forever to load</p>
-                </td>
-                <td data-label="Date Created">2024-03-06 18:00:00</td>
-                <td data-label="Status">
-                    <span class="status open">Open</span>
-                </td>
-                <td data-label="Actions" class="actions">
-                    <i class="fa-solid fa-info-circle"></i>
-                    <i class="fa-solid fa-download"></i>
-                    <i class="fa-solid fa-phone"></i>
-                    <i class="fa-regular fa-envelope"></i>
-                    <i class="fa-regular fa-pen-to-square"></i>
-                    <i class="fa-solid fa-trash-alt delete"></i>
-                </td>
-            </tr>
+             <tbody>
             </tbody>
         </table>
     </div>
-
-
-
-
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span id="closeModal" class="close">&times;</span>
+            <div id="modalBody"></div>
+        </div>
+    </div>
 </main>
 
 <script src="main.js"></script>

@@ -211,22 +211,26 @@ input[type="radio"]:hover{
     border-radius: 20px;
     transition: all 0.3s ease;
     white-space: nowrap;
+    margin-top: 1rem;
 }
 .btn:hover{
     background-color: white;
     color: black;
+}
+.error-message {
+    color: red;
+    font-size: 0.85em;
+    margin-top: 4px;
+    display: block;
 }
 
 table {
     width: 100%;
     border-collapse: collapse;
 }
-
-/* Hide table header on mobile */
 thead {
     display: none;
 }
-
 tr {
     display: block;
     background: #fff;
@@ -235,14 +239,11 @@ tr {
     border-radius: 8px;
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
-
 td {
     display: block;
     padding: 0.4rem 0;
     font-size: 0.9rem;
 }
-
-/* Add labels before table data */
 td::before {
     content: attr(data-label);
     font-weight: bold;
@@ -250,7 +251,6 @@ td::before {
     margin-bottom: 0.2rem;
     color: #555;
 }
-
 /* Action icons */
 .actions {
     display: flex;
@@ -286,12 +286,10 @@ td::before {
     width: 100%;
     border-collapse: collapse;
 }
-
 /* Hide thead by default (mobile view uses card style) */
 .tickets-table thead {
     display: none;
 }
-
 /* Each row looks like a card */
 .tickets-table tr {
     display: block;
@@ -302,7 +300,6 @@ td::before {
     padding: 0.75rem;
     box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
-
 /* Each cell stacks with labels */
 .tickets-table td {
     display: flex;
@@ -356,6 +353,51 @@ td::before {
     color: #000;
 }
 
+/*MODAL*/
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 9999;
+    padding-top: 1em;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    overflow: auto;
+}
+
+.modal-content {
+    background: #fff;
+    margin: auto;
+    padding: 20px;
+    border-radius: 12px;
+    width: 60%;
+    max-width: 600px;
+}
+
+.close {
+    color: #333;
+    float: right;
+    font-size: 28px;
+    cursor: pointer;
+}
+
+/*Styling for the modal*/
+.info-header {
+    font-size: 1.2rem;
+    text-align: center;
+    padding: .5em;
+}
+.info-item{
+   padding: .5em;
+    margin: .5rem auto;
+}
+.modal-textarea{
+
+}
+
+
 /* Tablet: 768px and larger */
 @media (min-width: 768px) {
     .header {
@@ -371,6 +413,29 @@ td::before {
 
     .mobile-menu-btn {
         display: none
+    }
+    .form-row{
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+    .form-label {
+        flex: 0 0 200px;
+        margin-bottom: 0;
+        text-align: left;
+    }
+
+    .form-row input,
+    .form-row select,
+    .form-row textarea {
+        flex: 0 0 auto;
+        max-width: 500px;
+        width: 100%;
+    }
+
+    .form-label{
+        display: inline-block;
     }
 
     /* Tickets*/
@@ -411,5 +476,7 @@ td::before {
     .header {
         font-size: 1.125rem;
     }
+
+
 
 }
