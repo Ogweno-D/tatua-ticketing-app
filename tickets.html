@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Tatua Ticketing App | Tickets</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="assets/icons/css/all.min.css">
+    <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+<header class="header">
+    <nav class="navbar">
+        <div class="navbar-brand">
+            <img class="logo-img" src="./assets/images/logo.png" alt="Logo Image">
+            <h1 class="brand-name">Tatua</h1>
+        </div>
+        <!--    Navigation -->
+        <ul class="navbar-nav" id="navbar-menu">
+            <li class="nav-link ">
+                <a class="" href="index.html" >Raise Ticket</a>
+            </li>
+            <li class="nav-link">
+                <a href="#">Ticket List</a>
+            </li>
+        </ul>
+        <!--        Mobile menu-->
+        <button class="mobile-menu-btn"  id="menuBtn" aria-label="toggle menu">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+    </nav>
+</header>
+<main>
+    <div class="top">
+<!--        Add Icon here-->
+        <i class="fa-solid fa-arrows-rotate"></i>
+        <a> Refresh</a>
+    </div>
+
+<!--    Tickets-->
+    <div class="tickets-container">
+        <table id="ticketsTable" class="tickets-table">
+            <thead>
+            <tr>
+                <th>Ticket Id</th>
+                <th>Raised by</th>
+                <th>Ticket Details</th>
+                <th>Date Created</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+             <tbody>
+            </tbody>
+        </table>
+    </div>
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span id="closeModal" class="close">&times;</span>
+            <div id="modalBody"></div>
+        </div>
+    </div>
+</main>
+
+<script src="main.js"></script>
+</body>
+</html>
