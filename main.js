@@ -47,8 +47,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
             errorElement.textContent ="";
 
-            if(field.id === "fullName" && field.value === "" && field.value.trim().length < 3) {
-                errorElement.textContent = " Full  Name is required";
+
+            if(field.id === "fullName" && field.value.trim() === "" && field.value.trim().length < 8) {
+                errorElement.textContent = "Full Name is required";
                 valid = false;
             }
 
@@ -371,36 +372,63 @@ document.addEventListener("DOMContentLoaded", () => {
                 });
             });
 
+            // document.querySelectorAll(".download").forEach(icon => {
+            //     icon.addEventListener("click", (e) => {
+            //         const id = parseInt(e.target.dataset.id);
+            //         const index = submissions.findIndex(sub => sub.id === id);
+            //         const sub = submissions[index];
+            //
+            //         const content = `
+            //             <div class="ticket-card">
+            //               <h3>🎟️ Ticket #${sub.id}</h3>
+            //               <p><strong>Name:</strong> ${sub.fullName}</p>
+            //               <p><strong>Email:</strong> ${sub.email}</p>
+            //               <p><strong>Subject:</strong> ${sub.subject}</p>
+            //               <p><strong>Message:</strong> ${sub.message}</p>
+            //               <p><strong>Status:</strong> <span class="status ${sub.status.toLowerCase()}">${sub.status}</span></p>
+            //               <p><strong>Date:</strong> ${sub.date}</p>
+            //             </div>
+            //
+            //         `;
+            //         const blob = new Blob([content], { type: "text/plain" });
+            //         const url = URL.createObjectURL(blob);
+            //
+            //         const a = document.createElement("a");
+            //         a.href = url;
+            //         a.download = `ticket_${sub.fullName.replace(/\s+/g, "_")}.txt`;
+            //         document.body.appendChild(a);
+            //         a.click();
+            //         document.body.removeChild(a);
+            //         URL.revokeObjectURL(url);
+            //     });
+            // });
+
             document.querySelectorAll(".download").forEach(icon => {
                 icon.addEventListener("click", (e) => {
                     const id = parseInt(e.target.dataset.id);
                     const index = submissions.findIndex(sub => sub.id === id);
                     const sub = submissions[index];
 
-                    const content = `
-                        <div class="ticket-card">
-                          <h3>🎟️ Ticket #${sub.id}</h3>
-                          <p><strong>Name:</strong> ${sub.fullName}</p>
-                          <p><strong>Email:</strong> ${sub.email}</p>
-                          <p><strong>Subject:</strong> ${sub.subject}</p>
-                          <p><strong>Message:</strong> ${sub.message}</p>
-                          <p><strong>Status:</strong> <span class="status ${sub.status.toLowerCase()}">${sub.status}</span></p>
-                          <p><strong>Date:</strong> ${sub.date}</p>
-                        </div>
+                    if (!sub.attachment || sub.attachment === "None") {
+                        alert("No attachment to download for this ticket.");
+                        return;
+                    }
 
-                    `;
-                    const blob = new Blob([content], { type: "text/plain" });
-                    const url = URL.createObjectURL(blob);
+                    // Assuming 'attachment' stores the file object itself (if not, you need a way to access it)
+                    const blob = sub.attachment instanceof File
+                        ? sub.attachment
+                        : new Blob([sub.attachment], { type: "application/octet-stream" });
 
                     const a = document.createElement("a");
-                    a.href = url;
-                    a.download = `ticket_${sub.fullName.replace(/\s+/g, "_")}.txt`;
+                    a.href = URL.createObjectURL(blob);
+                    a.download = sub.attachment.name || `attachment_${sub.id}`;
                     document.body.appendChild(a);
                     a.click();
                     document.body.removeChild(a);
-                    URL.revokeObjectURL(url);
+                    URL.revokeObjectURL(a.href);
                 });
             });
+
 
             document.querySelectorAll(".delete").forEach(icon => {
                 icon.addEventListener("click", (e) => {
