@@ -4,68 +4,111 @@
     <meta charset="UTF-8">
     <title>Tatua Ticketing App | Tickets</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Icons & Styles -->
     <link rel="stylesheet" href="assets/icons/css/all.min.css">
     <link rel="stylesheet" href="./styles.css">
 </head>
 <body>
+
+<!-- Toast Notifications -->
+<div id="toastContainer" class="toast-container" aria-live="polite" aria-atomic="true"></div>
+
+<!-- Header -->
 <header class="header">
     <nav class="navbar">
         <div class="trial-nav">
+            <!-- Brand -->
             <div class="navbar-brand">
-                <img class="logo-img" src="./assets/images/logo.png" alt="Logo Image">
+                <img class="logo-img" src="./assets/images/logo.png" alt="Tatua Logo">
                 <h1 class="brand-name">Tatua</h1>
             </div>
-            <!--    Navigation -->
+
+            <!-- Desktop Navigation -->
             <ul class="navbar-nav" id="navbar-menu">
-                <li class="nav-link ">
-                    <a class="" href="index.html" >Raise Ticket</a>
+                <li class="nav-link">
+                    <a href="index.html">Raise Ticket</a>
                 </li>
                 <li class="nav-link">
                     <a href="#">Ticket List</a>
                 </li>
             </ul>
         </div>
-        <!--        Mobile menu-->
-        <button class="mobile-menu-btn"  id="menuBtn" aria-label="toggle menu">
+
+        <!-- Mobile Menu Button -->
+        <button
+                class="mobile-menu-btn"
+                id="menuBtn"
+                aria-label="Toggle menu"
+                aria-expanded="false"
+                aria-controls="navbar-menu">
             <span></span>
             <span></span>
             <span></span>
         </button>
     </nav>
 </header>
+
+<!-- Main Content -->
 <main>
+
+    <!-- Refresh Button -->
     <div class="refresh-container">
-        <div class="refresh-icon">
+        <button class="refresh-icon" id="refreshBtn" aria-label="Refresh ticket list">
             <i class="fa-solid fa-arrows-rotate"></i>
-            <a class="refresh"> Refresh</a>
-        </div>
+            <span>Refresh</span>
+        </button>
     </div>
 
-<!--    Tickets-->
-    <div class="tickets-container">
+    <!-- Tickets Table -->
+    <section class="tickets-container">
         <table id="ticketsTable" class="tickets-table">
             <thead>
             <tr>
                 <th>Ticket Id</th>
-                <th>Raised by</th>
+                <th>Raised By</th>
                 <th>Ticket Details</th>
                 <th>Date Created</th>
                 <th>Status</th>
                 <th>Actions</th>
             </tr>
             </thead>
-             <tbody>
+            <tbody>
+            <!-- Tickets will be dynamically injected here -->
             </tbody>
         </table>
-    </div>
-    <div id="modal" class="modal">
+    </section>
+
+    <!-- Modal -->
+    <div id="modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
         <div class="modal-content">
-            <span id="closeModal" class="close">&times;</span>
-            <div id="modalBody"></div>
+
+            <button id="closeModal" class="close" aria-label="Close modal">&times;</button>
+
+            <h2 id="modalTitle" class="modal-title"></h2>
+
+            <div id="modalBody">
+
+            </div>
+
+            <!-- TODO:: Add Icons (fa) to these buttons-->
+            <div id="modalControls" class="modal-controls">
+                <button id="prevFile" class="nav-btn" aria-label="Previous file">Previous</button>
+                <button id="nextFile" class="nav-btn" aria-label="Next file">Next</button>
+                <button id="downloadFile" class="download-btn" aria-label="Download file">Download</button>
+            </div>
         </div>
+
+
     </div>
+
 </main>
 
-<script src="main.js"></script>
+<!-- Scripts -->
+<script src="js/storage.js"></script>
+<script src="js/toast.js"></script>
+<script src="js/form.js"></script>
+<script src="js/nav.js"></script>
+<script src="js/table.js"></script>
 </body>
 </html>
