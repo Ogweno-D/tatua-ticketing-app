@@ -8,20 +8,80 @@ document.addEventListener('DOMContentLoaded', () => {
     const modalBody = document.getElementById("modalBody");
     const closeModal = document.getElementById("closeModal");
 
+    // --- Filter & Sort State ---
+    let currentFilters = [];
+    let currentSorts = [];
+
+    const filterOptions = [
+        { key: "fullName", label: "Full Name" },
+        { key: "email", label: "Email" },
+        { key: "phone", label: "Phone" },
+        { key: "subject", label: "Subject" },
+        { key: "message", label: "Message" },
+        { key: "contact", label: "Contact" },
+        { key: "status", label: "Status" }
+    ];
+
+    // --- Modal helpers ---
     function openModal(content) {
         modalBody.innerHTML = content;
         modal.style.display = "block";
     }
+
     closeModal.onclick = () => modal.style.display = "none";
     window.onclick = (e) => { if (e.target === modal) modal.style.display = "none"; };
 
-    // Render the table
+    // --- URL State Persistence ---
+    function saveStateToUrl() {
+        const state = { filters: currentFilters, sorts: currentSorts };
+        const hash = btoa(JSON.stringify(state)).slice(0, 12);
+        localStorage.setItem("state_" + hash, JSON.stringify(state));
+        history.replaceState(null, "", location.pathname + "#s=" + hash);
+    }
+
+    function loadStateFromUrl() {
+        if (!location.hash.startsWith("#s=")) return;
+        const hash = location.hash.replace("#s=", "");
+        const json = localStorage.getItem("state_" + hash);
+        if (!json) return;
+        const state = JSON.parse(json);
+        if (state.filters) currentFilters = state.filters;
+        if (state.sorts) currentSorts = state.sorts;
+    }
+
+    loadStateFromUrl();
+
+    // --- Table Rendering with filters & sorts ---
     function renderTable() {
+        let filtered = [...submissions];
+
+        // Apply filters
+        currentFilters.forEach(f => {
+            filtered = filtered.filter(item => {
+                const cell = (item[f.field] || "").toString().toLowerCase();
+                return f.operator === "contains"
+                    ? cell.includes(f.value.toLowerCase())
+                    : cell === f.value.toLowerCase();
+            });
+        });
+
+        // Apply sorts
+        if (currentSorts.length) {
+            filtered.sort((a, b) => {
+                for (let rule of currentSorts) {
+                    let v1 = (a[rule.field] || "").toString().toLowerCase();
+                    let v2 = (b[rule.field] || "").toString().toLowerCase();
+                    if (v1 < v2) return rule.order === "asc" ? -1 : 1;
+                    if (v1 > v2) return rule.order === "asc" ? 1 : -1;
+                }
+                return 0;
+            });
+        }
+
+        // Render rows
         tableBody.innerHTML = "";
-
-        submissions.forEach(((submission) => {
+        filtered.forEach(submission => {
             const row = document.createElement("tr");
-
             row.innerHTML = `
                 <td>${submission.id}</td>
                 <td>
@@ -42,11 +102,138 @@ document.addEventListener('DOMContentLoaded', () => {
                     <i class="fa-regular fa-pen-to-square edit" data-id="${submission.id}"></i>
                     <i class="fa-solid fa-trash-alt delete" data-id="${submission.id}"></i>
                 </td>
-                `;
+            `;
             tableBody.appendChild(row);
-        }));
+        });
+
         actionHandlers();
     }
+
+    // --- Filter Modal Logic ---
+    const filterModal = document.getElementById("filterModal");
+    const filtersContainer = document.getElementById("filtersContainer");
+
+    function openFilterModal() {
+        filterModal.style.display = "flex";
+        if (!filtersContainer.querySelector(".filter-row")) addFilterRow();
+    }
+
+    function addFilterRow() {
+        const row = document.createElement("div");
+        row.className = "filter-row";
+        row.innerHTML = `
+             <div>
+                <label> Column </label>
+                 <select class="filter-field">
+                 <option selected disabled> Select column</option>
+                  ${filterOptions.map(opt => `<option value="${opt.key}">${opt.label}</option>`).join("")}
+                 </select>
+            </div>
+             <div>
+                <label> Relation </label>
+                 <select class="filter-operator">
+                    <option selected disabled> Select relation</option>
+                    <option value="contains">contains</option>
+                    <option value="equals">equals</option>
+                </select>   
+             </div>
+            <div>
+            <label> Filter Value </label>
+              <input type="text" class="filter-value" placeholder="Enter value">
+
+            </div>
+           
+           
+            <span class="trash" onclick="this.parentElement.remove()"> 
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                     <path d="M9 3V4H4V6H5V19C5 19.5304 5.21071 20.0391 5.58579 20.4142C5.96086 20.7893 6.46957 21 7 21H17C17.5304 21 18.0391 20.7893 18.4142 20.4142C18.7893 20.0391 19 19.5304 19 19V6H20V4H15V3H9ZM7 6H17V19H7V6ZM9 8V17H11V8H9ZM13 8V17H15V8H13Z" fill="#A10900"/>
+                </svg>
+            </span>        `;
+        filtersContainer.appendChild(row);
+    }
+
+    function submitFilters() {
+        currentFilters = [];
+        filtersContainer.querySelectorAll(".filter-row").forEach(row => {
+            const field = row.querySelector(".filter-field").value;
+            const operator = row.querySelector(".filter-operator").value;
+            const value = row.querySelector(".filter-value").value;
+            if (value) currentFilters.push({ field, operator, value });
+        });
+        saveStateToUrl();
+        renderTable();
+        filterModal.style.display = "none";
+    }
+
+    function resetFilters() {
+        currentFilters = [];
+        filtersContainer.innerHTML = "";
+        saveStateToUrl();
+        renderTable();
+    }
+
+    document.querySelector(".filter-icon").addEventListener("click", openFilterModal);
+    //document.getElementById("applyFilters").addEventListener("click", submitFilters);
+    //document.getElementById("resetFilters").addEventListener("click", resetFilters);
+
+    // --- Sort Modal Logic ---
+    const sortModal = document.getElementById("sortModal");
+    const sortsContainer = document.getElementById("sortsContainer");
+
+    function openSortModal() {
+        sortModal.style.display = "flex";
+        if (!sortsContainer.querySelector(".sort-row")) addSortRow();
+    }
+
+    function addSortRow() {
+        const row = document.createElement("div");
+        row.className = "sort-row";
+        row.innerHTML = `
+            <div>
+                <label> Column </label>
+                <select class="sort-field">
+                    ${filterOptions.map(opt => `<option value="${opt.key}">${opt.label}</option>`).join("")}
+                </select>
+            </div>
+            <div>
+                <label> Order</label>
+                <select class="sort-order">
+                    <option value="asc">Ascending</option>
+                    <option value="desc">Descending</option>
+                </select>
+            </div>
+            
+            <span class="trash" onclick="this.parentElement.remove()"> 
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                     <path d="M9 3V4H4V6H5V19C5 19.5304 5.21071 20.0391 5.58579 20.4142C5.96086 20.7893 6.46957 21 7 21H17C17.5304 21 18.0391 20.7893 18.4142 20.4142C18.7893 20.0391 19 19.5304 19 19V6H20V4H15V3H9ZM7 6H17V19H7V6ZM9 8V17H11V8H9ZM13 8V17H15V8H13Z" fill="#A10900"/>
+                </svg>
+            </span>
+        `;
+        sortsContainer.appendChild(row);
+    }
+
+    function submitSorts() {
+        currentSorts = [];
+        sortsContainer.querySelectorAll(".sort-row").forEach(row => {
+            const field = row.querySelector(".sort-field").value;
+            const order = row.querySelector(".sort-order").value;
+            currentSorts.push({ field, order });
+        });
+        saveStateToUrl();
+        renderTable();
+        sortModal.style.display = "none";
+    }
+
+    function resetSorts() {
+        currentSorts = [];
+        sortsContainer.innerHTML = "";
+        saveStateToUrl();
+        renderTable();
+    }
+
+    document.querySelector(".sort-icon").addEventListener("click", openSortModal);
+    // document.getElementById("applySorts").addEventListener("click", submitSorts);
+    // document.getElementById("resetSorts").addEventListener("click", resetSorts);
 
     // Attach handlers
     function actionHandlers() {
@@ -405,4 +592,18 @@ document.addEventListener('DOMContentLoaded', () => {
         location.reload();
     })
     renderTable();
+    document.querySelector(".filter-icon").addEventListener("click", openFilterModal);
+    document.querySelector(".sort-icon").addEventListener("click", openSortModal);
+    document.querySelector(".add-filter").addEventListener("click", addFilterRow);
+    document.querySelector(".add-sort").addEventListener("click", addSortRow);
+    document.getElementById("applyFilterBtn").addEventListener("click", submitFilters);
+    document.getElementById("resetFilterBtn").addEventListener("click", resetFilters);
+    document.getElementById("applySortBtn").addEventListener("click", submitSorts);
+    document.getElementById("resetSortBtn").addEventListener("click", resetSorts);
+    document.querySelectorAll(".close-filter-sort").forEach(btn => {
+        btn.addEventListener("click", () => {
+            btn.closest(".style-modal").style.display = "none";
+        });
+    });
+
 })
