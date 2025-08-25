@@ -124,7 +124,7 @@
             <div class="form-row">
                 <label class="form-label" for="attachment">Attachments:</label>
                 <div class="form-field">
-                    <input type="file" id="attachment" name="attachment" class="form-control" multiple>
+                    <input type="file" id="attachment" name="attachment" class="form-control" multiple accept=".pdf,image/png,image/jpeg,image/jpg" >
                     <div class="form-hints">
                         <span class="help-text">Only PDF, images (.jpeg, .jpg, .png) up to 1MB.</span>
                         <span class="error-message" id="attachmentError"></span>
@@ -166,8 +166,7 @@
 
 <!-- Scripts -->
 <!--<script src="main.js"></script>-->
-<script src ="js/encrypt.js"></script>
-<script src="js/storage.js"></script>
+ <script src="js/storage.js"></script>
 <script src="js/toast.js"></script>
 <script src="js/form.js"></script>
 <script src="js/nav.js"></script>
