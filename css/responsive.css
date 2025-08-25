@@ -1,0 +1,118 @@
+/*
+Responsive Breakpoints
+*/
+/* Tablet (>=768px) */
+@media (min-width: 768px) {
+    .trial-nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .navbar-nav {
+        display: flex;
+        flex-direction: row;
+        margin: auto 3rem;
+        padding: 0;
+    }
+
+    .nav-link {
+        margin: 0;
+        padding: 1em 0.6em;
+        font-size: 1.2rem;
+    }
+
+    .nav-link a:hover {
+        color: #a683ca;
+        text-decoration: none;
+    }
+
+    .mobile-menu-btn {
+        display: none;
+    }
+
+    .form-row {
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .form-field {
+        flex: 0 0 auto;
+        max-width: 500px;
+        width: 100%;
+    }
+
+    .form-label {
+        flex: 0 0 200px;
+        margin-bottom: 0;
+        text-align: left;
+        display: inline-block;
+    }
+
+    .form-check {
+        display: flex;
+        max-width: 100px;
+        margin: auto 0.8rem;
+    }
+
+    .form-hints{
+        display: flex;
+        flex-direction: column  ;
+        margin-top: .5rem;
+        font-size: 0.85rem;
+    }
+
+    .form-btn{
+        display: flex;
+        gap: 2rem;
+        padding: 0.5rem 0;
+
+    }
+
+    /* Tickets table view */
+    .tickets-container {
+        padding: 2em;
+        margin: auto;
+    }
+
+    .tickets-table thead {
+        display: table-header-group;
+        color: hsl(270, 23%, 40%);
+        border-bottom: 3px solid hsl(270, 23%, 40%);
+    }
+
+    .tickets-table tr {
+        display: table-row;
+        border: none;
+        background: none;
+        box-shadow: none;
+        padding: 0.75rem;
+    }
+
+    .tickets-table th {
+        font-size: 1.5rem;
+        font-weight: 600;
+        border-bottom: 4px solid hsl(270, 23%, 40%);
+        text-align: left;
+    }
+
+    .tickets-table td {
+        display: table-cell;
+        padding: 0.5rem;
+        border-bottom: 2px solid darkgrey;
+        text-align: left;
+    }
+
+    .tickets-table td::before {
+        content: none;
+    }
+}
+
+/* Desktop (>=1200px) */
+@media (min-width: 1200px) {
+    .header {
+        font-size: 1.125rem;
+    }
+}

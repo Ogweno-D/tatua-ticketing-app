@@ -1,0 +1,61 @@
+/* ===============================
+   Forms & Buttons
+=================================*/
+.form-section { padding: 1em; margin: 1rem; }
+.form-section-msg { font-size: 1rem; color: hsl(0,1%,44%); margin-bottom: 1rem; }
+.form-row { display: flex; flex-direction: column; margin-bottom: 1rem; }
+
+.form-label { font-weight: 600; margin-bottom: 0.5rem; }
+input, select, textarea {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid #e1e5e9;
+    border-radius: 6px;
+    font-size: 16px;
+    background-color: var(--white);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: hsl(270, 50%, 40%);
+    box-shadow: 0 0 0 3px hsl(270, 50%, 90%);
+}
+
+input[type="checkbox"], input[type="radio"] { accent-color: var(--accent-color); }
+input[type="file"] { cursor: pointer; padding: 0.5em; }
+
+.btn, .btn-toggle, .btn-add {
+    background-color: var(--accent-color);
+    color: var(--white);
+    padding: 0.5em 1em;
+    border-radius: 20px;
+    border: none;
+    transition: all 0.3s ease;
+}
+.btn:hover, .btn-toggle:hover, .btn-add:hover { background-color: var(--black); color: var(--white); }
+
+.t-c label { display: flex; align-items: center; cursor: pointer; font-size: 0.95rem; }
+.t-c input[type="checkbox"] { margin-right: 1em; width: 16px; height: 16px; }
+.t-c a { text-decoration: underline; color: rgba(66,50,117,0.9); }
+.t-c a:hover { text-decoration: none; color: hsl(270,50%,50%); }
+
+/* Input Error*/
+input.input-error,
+textarea.input-error,
+select.input-error {
+    border: 2px solid #e63946 !important;
+    background-color: #ffe5e9 !important;
+    padding-right: 2rem;
+    position: relative;
+}
+
+input.input-error::after,
+textarea.input-error::after,
+select.input-error::after {
+    content: "⚠️";
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1rem;
+}

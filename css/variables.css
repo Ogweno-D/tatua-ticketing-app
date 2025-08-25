@@ -1,0 +1,24 @@
+/* ===============================
+   CSS Variables & Fonts
+=================================*/
+
+:root {
+    --primary-color: hsl(270, 23%, 18%);
+    --secondary-color: hsl(270, 23%, 40%);
+    --accent-color: rebeccapurple;
+    --bg-color: #f5f5f5;
+    --white: #fff;
+    --black: #000;
+    --success-color: #28a745;
+    --error-color: #dc3545;
+    --warning-color: #ffc107;
+    --info-color: #17a2b8;
+    --font-main: 'Lexend Deca', sans-serif;
+}
+
+@font-face {
+    font-family: 'Lexend Deca';
+    src: url('assets/fonts/LexendDeca-VariableFont_wght.ttf') format('truetype');
+    font-style: normal;
+    font-display: swap;
+}
