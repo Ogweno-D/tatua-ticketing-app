@@ -106,31 +106,67 @@ document.addEventListener('DOMContentLoaded', () => {
             tableBody.appendChild(row);
         });
 
+        // Toast messages for each action
+        if( currentFilters.length && currentSorts.length){
+            closeFilterModal()
+            closeSortModal()
+            Toast.showToast("Filters and sorting applied successfully", "success");
+        } else if( currentFilters.length ){
+            closeFilterModal()
+            Toast.showToast("Filters applied successfully", "success");
+        } else if( currentSorts.length){
+            closeSortModal()
+            Toast.showToast("Sort applied successfully", "success");
+        }else {
+            closeSortModal()
+            closeFilterModal()
+            Toast.showToast("Showing all results", "info");
+        }
+
         actionHandlers();
     }
 
     // --- Filter Modal Logic ---
     const filterModal = document.getElementById("filterModal");
     const filtersContainer = document.getElementById("filtersContainer");
+    const filterOverlay = document.getElementById("filterOverlay");
+
 
     function openFilterModal() {
         filterModal.style.display = "flex";
+        if(filterOverlay){
+            filterOverlay.style.display = "flex";
+        }
         if (!filtersContainer.querySelector(".filter-row")) addFilterRow();
     }
+
+    function  closeFilterModal(){
+        filterModal.style.display = "none";
+        if(filterOverlay){
+            filterOverlay.style.display = "none";
+        }
+    }
+    if (filterOverlay) {
+        filterOverlay.addEventListener("click", e => {
+            if (e.target === filterOverlay) closeFilterModal();
+        });
+    }
+
+
 
     function addFilterRow() {
         const row = document.createElement("div");
         row.className = "filter-row";
         row.innerHTML = `
              <div>
-                <label> Column </label>
-                 <select class="filter-field">
-                 <option selected disabled> Select column</option>
-                  ${filterOptions.map(opt => `<option value="${opt.key}">${opt.label}</option>`).join("")}
+                <label class="form-label"> Column </label>
+                 <select class="filter-field" name="Select your column" >
+                    <option selected disabled hidden> Select column</option>
+                    ${filterOptions.map(opt => `<option value="${opt.key}">${opt.label}</option>`).join("")}
                  </select>
             </div>
              <div>
-                <label> Relation </label>
+                <label class="form-label"> Relation </label>
                  <select class="filter-operator">
                     <option selected disabled> Select relation</option>
                     <option value="contains">contains</option>
@@ -138,18 +174,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 </select>   
              </div>
             <div>
-            <label> Filter Value </label>
+            <label class="form-label"> Filter Value </label>
               <input type="text" class="filter-value" placeholder="Enter value">
-
             </div>
-           
-           
-            <span class="trash" onclick="this.parentElement.remove()"> 
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                     <path d="M9 3V4H4V6H5V19C5 19.5304 5.21071 20.0391 5.58579 20.4142C5.96086 20.7893 6.46957 21 7 21H17C17.5304 21 18.0391 20.7893 18.4142 20.4142C18.7893 20.0391 19 19.5304 19 19V6H20V4H15V3H9ZM7 6H17V19H7V6ZM9 8V17H11V8H9ZM13 8V17H15V8H13Z" fill="#A10900"/>
-                </svg>
-            </span>        `;
+            <div>
+                 <span class="trash" onclick="this.parentElement.remove()"> 
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                         <path d="M9 3V4H4V6H5V19C5 19.5304 5.21071 20.0391 5.58579 20.4142C5.96086 20.7893 6.46957 21 7 21H17C17.5304 21 18.0391 20.7893 18.4142 20.4142C18.7893 20.0391 19 19.5304 19 19V6H20V4H15V3H9ZM7 6H17V19H7V6ZM9 8V17H11V8H9ZM13 8V17H15V8H13Z" fill="#A10900"/>
+                    </svg>
+                </span>
+            </div>
+            
+                   `;
         filtersContainer.appendChild(row);
+
     }
 
     function submitFilters() {
@@ -179,10 +217,27 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Sort Modal Logic ---
     const sortModal = document.getElementById("sortModal");
     const sortsContainer = document.getElementById("sortsContainer");
+    const sortOverlay = document.getElementById("sortOverlay");
+    console.log(sortOverlay);
 
     function openSortModal() {
+        if(sortOverlay){
+            sortOverlay.style.display = "flex";
+        }
         sortModal.style.display = "flex";
+
         if (!sortsContainer.querySelector(".sort-row")) addSortRow();
+    }
+    function  closeSortModal(){
+        sortModal.style.display = "none";
+        if(sortOverlay){
+            sortOverlay.style.display = "none";
+        }
+    }
+    if (sortOverlay) {
+        sortOverlay.addEventListener("click", e => {
+            if (e.target === sortOverlay) closeSortModal();
+        });
     }
 
     function addSortRow() {
@@ -190,13 +245,13 @@ document.addEventListener('DOMContentLoaded', () => {
         row.className = "sort-row";
         row.innerHTML = `
             <div>
-                <label> Column </label>
+                <label class="form-label"> Column </label>
                 <select class="sort-field">
                     ${filterOptions.map(opt => `<option value="${opt.key}">${opt.label}</option>`).join("")}
                 </select>
             </div>
             <div>
-                <label> Order</label>
+                <label class="form-label"> Order</label>
                 <select class="sort-order">
                     <option value="asc">Ascending</option>
                     <option value="desc">Descending</option>
@@ -210,6 +265,7 @@ document.addEventListener('DOMContentLoaded', () => {
             </span>
         `;
         sortsContainer.appendChild(row);
+        Toast.showToast("Table sorted successfully", "success");
     }
 
     function submitSorts() {
@@ -399,7 +455,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const modalBody = document.getElementById("modalBody");
                     const modalTitle = document.getElementById("modalTitle");
 
-                    // ✅ Show file name + position
+                    // Show file name + position
                     modalTitle.textContent = `File ${index + 1} of ${sub.attachments.length}: ${file.name}`;
                     modalTitle.style.display = "block"; // show title
 
@@ -423,7 +479,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         modalBody.innerHTML = `<p>Preview not available. You can download the file.</p>`;
                     }
 
-                    // ✅ Download button
+                    // Download button
                     const downloadBtn = document.getElementById("downloadFile");
                     downloadBtn.style.display = "inline-block"; // show download button
                     downloadBtn.onclick = () => {
@@ -436,7 +492,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         URL.revokeObjectURL(url);
                     };
 
-                    // ✅ Arrows visibility
+                    // Arrows visibility
                     document.getElementById("prevFile").style.display = (index > 0) ? "inline-block" : "none";
                     document.getElementById("nextFile").style.display = (index < sub.attachments.length - 1) ? "inline-block" : "none";
                 }
@@ -602,8 +658,23 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById("resetSortBtn").addEventListener("click", resetSorts);
     document.querySelectorAll(".close-filter-sort").forEach(btn => {
         btn.addEventListener("click", () => {
-            btn.closest(".style-modal").style.display = "none";
+            const modal = btn.closest(".style-modal");
+            modal.style.display = "none";
+
+            if (modal.id === "filterModal") {
+                filterOverlay.style.display = "none";
+            } else if (modal.id === "sortModal") {
+                sortOverlay.style.display = "none";
+            }
         });
     });
+
+
+
+
+
+
+
+
 
 })

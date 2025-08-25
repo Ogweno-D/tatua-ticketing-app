@@ -203,7 +203,7 @@ toggleBtn.addEventListener("click", () => {
 
     // Render submissions, filters, sorts
     // renderAll();
-
+    Toast.showToast(`Storage switched to ${selectedStorageType} storage`, "info");
     console.log("Switched storage to:", selectedStorageType);
 });
 
