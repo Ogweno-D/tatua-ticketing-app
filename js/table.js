@@ -1,9 +1,16 @@
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     const tableBody = document.querySelector("#ticketsTable tbody");
     const closeBtn = document.querySelectorAll(".close");
     if (!tableBody) return;
 
-    let submissions = storage.getSubmissions();
+
+    await window.storageReady;
+    const storage = window.storage;
+    let submissions = await storage.getSubmissions();
+    console.log(submissions);
+
+
+
     const modal = document.getElementById("modal");
     const modalBody = document.getElementById("modalBody");
     const closeModal = document.getElementById("closeModal");
@@ -13,13 +20,13 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentSorts = [];
 
     const filterOptions = [
-        { key: "fullName", label: "Full Name" },
-        { key: "email", label: "Email" },
-        { key: "phone", label: "Phone" },
-        { key: "subject", label: "Subject" },
-        { key: "message", label: "Message" },
-        { key: "contact", label: "Contact" },
-        { key: "status", label: "Status" }
+        {key: "fullName", label: "Full Name"},
+        {key: "email", label: "Email"},
+        {key: "phone", label: "Phone"},
+        {key: "subject", label: "Subject"},
+        {key: "message", label: "Message"},
+        {key: "contact", label: "Contact"},
+        {key: "status", label: "Status"}
     ];
 
     // --- Modal helpers ---
@@ -29,11 +36,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     closeModal.onclick = () => modal.style.display = "none";
-    window.onclick = (e) => { if (e.target === modal) modal.style.display = "none"; };
+    window.onclick = (e) => {
+        if (e.target === modal) modal.style.display = "none";
+    };
 
     // --- URL State Persistence ---
     function saveStateToUrl() {
-        const state = { filters: currentFilters, sorts: currentSorts };
+        const state = {filters: currentFilters, sorts: currentSorts};
         const hash = btoa(JSON.stringify(state)).slice(0, 12);
         localStorage.setItem("state_" + hash, JSON.stringify(state));
         history.replaceState(null, "", location.pathname + "#s=" + hash);
@@ -107,17 +116,17 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         // Toast messages for each action
-        if( currentFilters.length && currentSorts.length){
+        if (currentFilters.length && currentSorts.length) {
             closeFilterModal()
             closeSortModal()
             Toast.showToast("Filters and sorting applied successfully", "success");
-        } else if( currentFilters.length ){
+        } else if (currentFilters.length) {
             closeFilterModal()
             Toast.showToast("Filters applied successfully", "success");
-        } else if( currentSorts.length){
+        } else if (currentSorts.length) {
             closeSortModal()
             Toast.showToast("Sort applied successfully", "success");
-        }else {
+        } else {
             closeSortModal()
             closeFilterModal()
             Toast.showToast("Showing all results", "info");
@@ -134,24 +143,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function openFilterModal() {
         filterModal.style.display = "flex";
-        if(filterOverlay){
+        if (filterOverlay) {
             filterOverlay.style.display = "flex";
         }
         if (!filtersContainer.querySelector(".filter-row")) addFilterRow();
     }
 
-    function  closeFilterModal(){
+    function closeFilterModal() {
         filterModal.style.display = "none";
-        if(filterOverlay){
+        if (filterOverlay) {
             filterOverlay.style.display = "none";
         }
     }
+
     if (filterOverlay) {
         filterOverlay.addEventListener("click", e => {
             if (e.target === filterOverlay) closeFilterModal();
         });
     }
-
 
 
     function addFilterRow() {
@@ -196,7 +205,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const field = row.querySelector(".filter-field").value;
             const operator = row.querySelector(".filter-operator").value;
             const value = row.querySelector(".filter-value").value;
-            if (value) currentFilters.push({ field, operator, value });
+            if (value) currentFilters.push({field, operator, value});
         });
         saveStateToUrl();
         renderTable();
@@ -221,19 +230,21 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log(sortOverlay);
 
     function openSortModal() {
-        if(sortOverlay){
+        if (sortOverlay) {
             sortOverlay.style.display = "flex";
         }
         sortModal.style.display = "flex";
 
         if (!sortsContainer.querySelector(".sort-row")) addSortRow();
     }
-    function  closeSortModal(){
+
+    function closeSortModal() {
         sortModal.style.display = "none";
-        if(sortOverlay){
+        if (sortOverlay) {
             sortOverlay.style.display = "none";
         }
     }
+
     if (sortOverlay) {
         sortOverlay.addEventListener("click", e => {
             if (e.target === sortOverlay) closeSortModal();
@@ -273,7 +284,7 @@ document.addEventListener('DOMContentLoaded', () => {
         sortsContainer.querySelectorAll(".sort-row").forEach(row => {
             const field = row.querySelector(".sort-field").value;
             const order = row.querySelector(".sort-order").value;
-            currentSorts.push({ field, order });
+            currentSorts.push({field, order});
         });
         saveStateToUrl();
         renderTable();
@@ -335,8 +346,8 @@ document.addEventListener('DOMContentLoaded', () => {
             `);
                 document.getElementById("sendBtn").onclick = () => {
                     const reply = document.querySelector((".modal-textarea"));
-                    const subject = encodeURIComponent("Tatua Ticket #" + sub.id +":" + sub.message)
-                    const body = encodeURIComponent("Hello " + sub.fullName+ ", \n\n" + reply.value.trim());
+                    const subject = encodeURIComponent("Tatua Ticket #" + sub.id + ":" + sub.message)
+                    const body = encodeURIComponent("Hello " + sub.fullName + ", \n\n" + reply.value.trim());
 
                     window.location.href = `mailto:${sub.email}? subject=${subject}&body=${body}`;
                     Toast.showToast("Message sent successfully.", "success");
@@ -373,9 +384,9 @@ document.addEventListener('DOMContentLoaded', () => {
                             <div class="form-row">
                                 <label class="form-label" for="editSubject">Subject:</label>
                                 <select id="editSubject" name="subject">
-                                    <option value="Web Development" ${sub.subject==="Web Development"?"selected":""}>Web Development</option>
-                                    <option value="App Development" ${sub.subject==="App Development"?"selected":""}>App Development</option>
-                                    <option value="Other" ${sub.subject==="Other"?"selected":""}>Other</option>
+                                    <option value="Web Development" ${sub.subject === "Web Development" ? "selected" : ""}>Web Development</option>
+                                    <option value="App Development" ${sub.subject === "App Development" ? "selected" : ""}>App Development</option>
+                                    <option value="Other" ${sub.subject === "Other" ? "selected" : ""}>Other</option>
                                 </select>
                             </div>
                         
@@ -387,11 +398,11 @@ document.addEventListener('DOMContentLoaded', () => {
                             <div class="form-row">
                                 <label class="form-label" for="editContact">Preferred Contact:</label>
                                 <label class="form-check">
-                                    <input type="radio" name="contact" value="email" ${sub.contact==="email"?"checked":""}>
+                                    <input type="radio" name="contact" value="email" ${sub.contact === "email" ? "checked" : ""}>
                                     Email
                                 </label>
                                 <label class="form-check">
-                                    <input type="radio" name="contact" value="phone" ${sub.contact==="phone"?"checked":""}>
+                                    <input type="radio" name="contact" value="phone" ${sub.contact === "phone" ? "checked" : ""}>
                                     Phone
                                 </label>
                             </div>
@@ -399,9 +410,9 @@ document.addEventListener('DOMContentLoaded', () => {
                             <div class="form-row">
                                 <label class="form-label" for="editStatus">Status:</label>
                                 <select id="editStatus" name="status">
-                                    <option value="Open" ${sub.status==="Open"?"selected":""}>Open</option>
-                                    <option value="Closed" ${sub.status==="Closed"?"selected":""}>Closed</option>
-                                    <option value="Pending" ${sub.status==="Pending"?"selected":""}>Pending</option>
+                                    <option value="Open" ${sub.status === "Open" ? "selected" : ""}>Open</option>
+                                    <option value="Closed" ${sub.status === "Closed" ? "selected" : ""}>Closed</option>
+                                    <option value="Pending" ${sub.status === "Pending" ? "selected" : ""}>Pending</option>
                                 </select>
                             </div>
                         
@@ -443,7 +454,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const mimeType = header.match(/:(.*?);/)[1];
                     const byteString = atob(base64);
                     const byteArray = Uint8Array.from(byteString, c => c.charCodeAt(0));
-                    return new Blob([byteArray], { type: mimeType });
+                    return new Blob([byteArray], {type: mimeType});
                 }
 
                 // Render Preview
@@ -556,9 +567,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
 
-
-
-
         // document.querySelectorAll(".download").forEach(icon => {
         //     icon.addEventListener("click", (e) => {
         //         const id = parseInt(e.target.dataset.id);
@@ -605,7 +613,6 @@ document.addEventListener('DOMContentLoaded', () => {
         //         });
         //     });
         // });
-
 
 
         document.querySelectorAll(".delete").forEach(icon => {
@@ -668,13 +675,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     });
-
-
-
-
-
-
-
 
 
 })

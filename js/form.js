@@ -1,27 +1,30 @@
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
     const form = document.getElementById("ticketForm");
-    if(!form) return;
+    if (!form) return;
 
     const inputs = form.querySelectorAll("input, textarea, select");
-    let submissions = storage.getSubmissions();
+    await window.storageReady;
+    const storage = window.storage;
+    let submissions = await storage.getSubmissions();
+    console.log(submissions);
 
     // Toggle Input error
-    function toggleInputError(field, showError){
-        if(showError){
+    function toggleInputError(field, showError) {
+        if (showError) {
             field.classList.add("input-error");
-        } else{
+        } else {
             field.classList.remove("input-error");
         }
     }
 
     function validateField(field) {
-        const errorElement = document.getElementById(field.id +"Error");
+        const errorElement = document.getElementById(field.id + "Error");
         if (!errorElement) return true;
 
-        errorElement.textContent ="";
+        errorElement.textContent = "";
 
         let valid = true;
-        if(field.id === "fullName" && field.value.trim() === "" && field.value.trim().length <= 4) {
+        if (field.id === "fullName" && field.value.trim() === "" && field.value.trim().length <= 4) {
             errorElement.textContent = "Full Name is required";
             valid = false;
         }
@@ -58,7 +61,7 @@ document.addEventListener("DOMContentLoaded", () => {
         // Input of max 1MBS
         if (field.id === "attachment" && field.files.length > 0) {
 
-            const allowed = ["application/pdf", "image/jpeg","image/jpg", "image/png"];
+            const allowed = ["application/pdf", "image/jpeg", "image/jpg", "image/png"];
 
             for (let i = 0; i < field.files.length; i++) {
                 const file = field.files[i];
@@ -81,9 +84,9 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         }
 
-        if(valid){
+        if (valid) {
             field.classList.remove("input-error");
-        } else{
+        } else {
             field.classList.add("input-error");
         }
 
@@ -92,21 +95,21 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // validate the radio group
-    function validateRadioGroup(){
+    function validateRadioGroup() {
         const contactRadios = document.querySelectorAll("input[name='contact']");
         const errorElement = document.getElementById("contactError");
 
-        let checked =false;
+        let checked = false;
 
         contactRadios.forEach(radio => {
             if (radio.checked) checked = true;
         });
 
-        if(!checked){
+        if (!checked) {
             errorElement.textContent = "Please select a contact method ";
             return false;
-        } else{
-            errorElement.textContent ="";
+        } else {
+            errorElement.textContent = "";
             return true;
         }
     }
@@ -125,13 +128,12 @@ document.addEventListener("DOMContentLoaded", () => {
     // Live validation
     // Validate each input on blur(When out of focus)
     inputs.forEach(input => {
-        input.addEventListener("blur", ()=>{
-            if(input.type !== "checkbox" && input.type !== "radio") {
+        input.addEventListener("blur", () => {
+            if (input.type !== "checkbox" && input.type !== "radio") {
                 validateField(input);
             }
         });
     })
-
     form.addEventListener("submit", (e) => {
         e.preventDefault();
 
@@ -144,7 +146,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!validateRadioGroup()) isValid = false;
         if (!validateTerms()) isValid = false;
         if (!isValid) {
-            Toast.showToast("Fill in the form correctly before submitting","warning");
+            Toast.showToast("Fill in the form correctly before submitting", "warning");
             return;
         }
 
@@ -156,7 +158,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const promises = files.map(file => {
                 return new Promise(resolve => {
                     const reader = new FileReader();
-                    reader.onload =() =>{
+                    reader.onload = () => {
                         resolve({
                             name: file.name,
                             type: file.type,
@@ -177,10 +179,10 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    function saveSubmission(attachments) {
+    async function saveSubmission(attachments) {
         const formData = new FormData(form);
         const submission = {
-            id: storage.getNextId(),
+            id: await storage.getNextId(),
             fullName: formData.get("fullName"),
             email: formData.get("email"),
             phone: formData.get("phone"),
@@ -194,7 +196,7 @@ document.addEventListener("DOMContentLoaded", () => {
         };
 
         submissions.push(submission);
-        storage.saveSubmissions(submissions);
+        await storage.saveSubmissions(submissions);
 
         Toast.showToast("Ticket submitted successfully.", "success");
         // alert("Ticket submitted!");
