@@ -1,23 +1,301 @@
+// document.addEventListener('DOMContentLoaded', async () => {
+//     const tableBody = document.querySelector("#ticketsTable tbody");
+//     const closeBtn = document.querySelectorAll(".close");
+//     const container = document.querySelector(".active-tags-container");
+//     console.log(container);
+//     if (!tableBody) return;
+//
+//
+//     await window.storageReady;
+//     const storage = window.storage;
+//     let submissions = await storage.getSubmissions();
+//     console.log(submissions);
+//
+//
+//
+//     const modal = document.getElementById("modal");
+//     const modalBody = document.getElementById("modalBody");
+//     //const closeModal = document.getElementById("closeModal");
+//
+//     // --- Filter & Sort State ---
+//     let tableState = await storage.getTableState() || {};
+//     let currentFilters = Array.isArray(tableState.filters) ? tableState.filters : [];
+//     let currentSorts   = Array.isArray(tableState.sorts)   ? tableState.sorts   : [];
+//
+//
+//
+//     const filterOptions = [
+//         {key: "fullName", label: "Full Name"},
+//         {key: "email", label: "Email"},
+//         {key: "phone", label: "Phone"},
+//         {key: "subject", label: "Subject"},
+//         {key: "message", label: "Message"},
+//         {key: "contact", label: "Contact"},
+//         {key: "status", label: "Status"}
+//     ];
+//
+//     // --- Modal helpers ---
+//     function openModal(content) {
+//         modalBody.innerHTML = content;
+//         modal.style.display = "block";
+//     }
+//     function closeModal() {
+//         modal.style.display = "none";
+//     }
+//
+//     // closeModal.onclick = () => modal.style.display = "none";
+//     window.onclick = (e) => {
+//         if (e.target === modal) modal.style.display = "none";
+//     };
+//
+//     // --- URL State Persistence ---
+//     function saveStateToUrl() {
+//         // const state = {filters: currentFilters, sorts: tableState.sorts};
+//         const hash = btoa(JSON.stringify(tableState)).slice(0, 12);
+//         localStorage.setItem("state_" + hash, JSON.stringify(tableState));
+//         history.replaceState(null, "", location.pathname + "#s=" + hash);
+//     }
+//
+//     function loadStateFromUrl() {
+//         if (!location.hash.startsWith("#s=")) return;
+//         const hash = location.hash.replace("#s=", "");
+//         const json = localStorage.getItem("state_" + hash);
+//         if (!json) return;
+//         const state = JSON.parse(json);
+//         //if (state.filters) currentFilters = state.filters;
+//         //if (state.sorts) tableState.sorts = state.sorts;
+//         tableState.filters = state.filters || [];
+//         tableState.sorts = state.sorts || [];
+//     }
+//
+//     loadStateFromUrl();
+//     function renderActiveTags() {
+//         const filterContainer = document.getElementById("filterContainer");
+//         const sortContainer = document.getElementById("sortContainer");
+//
+//         filterContainer.innerHTML = '';
+//         currentFilters.forEach((f, i) => {
+//             const tag = document.createElement('div');
+//             tag.className = 'active-tag';
+//             tag.innerHTML = `
+//             <div class="tag-number">
+//                 <span class="total-tags">1</span>
+//                 <span class="tag-type">Filter</span>
+//             </div>
+//             <div class="delete-tag" data-type="filter" data-index="${i}">
+//                 <i class="fa-solid fa-close"></i>
+//             </div>
+//         `;
+//             filterContainer.appendChild(tag);
+//         });
+//
+//         sortContainer.innerHTML = '';
+//         currentSorts.forEach((s, i) => {
+//             const tag = document.createElement('div');
+//             tag.className = 'active-tag';
+//             tag.innerHTML = `
+//             <div class="tag-number">
+//                 <span class="total-tags">1</span>
+//                 <span class="tag-type">Sort</span>
+//             </div>
+//             <div class="delete-tag" data-type="sort" data-index="${i}">
+//                 <i class="fa-solid fa-close"></i>
+//             </div>
+//         `;
+//             sortContainer.appendChild(tag);
+//         });
+//
+//         // Add event listeners dynamically
+//         document.querySelectorAll('.delete-tag').forEach(el => {
+//             el.addEventListener('click', () => {
+//                 const type = el.dataset.type;
+//                 const index = parseInt(el.dataset.index, 10);
+//
+//                 if (type === 'filter') currentFilters.splice(index, 1);
+//                 else if (type === 'sort') currentSorts.splice(index, 1);
+//
+//                 renderActiveTags();
+//                 renderTable();
+//             });
+//         });
+//     }
+//
+//
+//
+//     // --- Table Rendering with filters & sorts ---
+//     function renderTable() {
+//         // let filtered = [...submissions];
+//
+//         // // Apply filters
+//         // tableState.filters.forEach(f => {
+//         //     filtered = filtered.filter(item => {
+//         //         const cell = (item[f.field] || "").toString().toLowerCase();
+//         //         return f.operator === "contains"
+//         //             ? cell.includes(f.value.toLowerCase())
+//         //             : cell === f.value.toLowerCase();
+//         //     });
+//         // });
+//         //
+//         // // Apply sorts
+//         // if (tableState.sorts.length) {
+//         //     filtered.sort((a, b) => {
+//         //         for (let rule of tableState.sorts) {
+//         //             let v1 = (a[rule.field] || "").toString().toLowerCase();
+//         //             let v2 = (b[rule.field] || "").toString().toLowerCase();
+//         //             if (v1 < v2) return rule.order === "asc" ? -1 : 1;
+//         //             if (v1 > v2) return rule.order === "asc" ? 1 : -1;
+//         //         }
+//         //         return 0;
+//         //     });
+//         // }
+//
+//         const cached = submissions.map(item=>{
+//             let lc = {};
+//             for(let key in item){
+//                 lc[key] =(item[key] || "").toString().toLowerCase();
+//             }
+//             return {original:item,lc};
+//         })
+//
+//         // Filters
+//         let filtered = cached.filter(({lc})=>{
+//            return currentFilters.every(f=>{
+//                const cell = lc[f.field];
+//                const value = f.value.toLowerCase();
+//
+//                return f.operator === "contains" ? cell.includes(value) : cell === value
+//            });
+//         });
+//
+//         if(currentSorts.length ){
+//             filtered.sort((a,b)=>{
+//                 for(let rule of currentSorts){
+//                     const v1 = a.lc[rule.field];
+//                     const v2 = b.lc[rule.field];
+//
+//                     if(v1<v2) return rule.order === "asc" ? -1:1;
+//                     if(v1>v2) return  rule.order === "asc" ? 1:-1;
+//                 }
+//                 return 0;
+//             })
+//         }
+//
+//         filtered = filtered.map(x=>x.original);
+//
+//         // Render rows
+//         tableBody.innerHTML = "";
+//         filtered.forEach(submission => {
+//             const row = document.createElement("tr");
+//             row.innerHTML = `
+//                 <td>${submission.id}</td>
+//                 <td>
+//                     <p class="user-name">${submission.fullName}</p>
+//                     <p class="user-email">${submission.email}</p>
+//                 </td>
+//                 <td>
+//                     <p class="message-title">${submission.subject}</p>
+//                     <p class="user-message">${submission.message}</p>
+//                 </td>
+//                 <td>${submission.date}</td>
+//                 <td><span class="status ${submission.status.toLowerCase()}">${submission.status}</span></td>
+//                 <td class="actions">
+//                     <i class="fa-solid fa-info-circle info" data-id="${submission.id}"></i>
+//                     <i class="fa-solid fa-download download" data-id="${submission.id}"></i>
+//                     <i class="fa-solid fa-phone call" data-id="${submission.id}"></i>
+//                     <i class="fa-regular fa-envelope message" data-id="${submission.id}"></i>
+//                     <i class="fa-regular fa-pen-to-square edit" data-id="${submission.id}"></i>
+//                     <i class="fa-solid fa-trash-alt delete" data-id="${submission.id}"></i>
+//                 </td>
+//             `;
+//             tableBody.appendChild(row);
+//         });
+//
+//         // Rendering the active selected preferred contact
+//         document.querySelectorAll("td.actions").forEach(cell => {
+//             const id = parseInt(cell.querySelector(".info").dataset.id);
+//             const submission = submissions.find(sub => sub.id === id);
+//
+//             const phoneIcon = cell.querySelector(".call");
+//             const emailIcon = cell.querySelector(".message");
+//
+//             // Reset first (important if re-rendering)
+//             phoneIcon.classList.remove("disabled", "tooltip");
+//             emailIcon.classList.remove("disabled", "tooltip");
+//             phoneIcon.removeAttribute("data-tooltip");
+//             emailIcon.removeAttribute("data-tooltip");
+//
+//             if (submission.contact === "phone") {
+//                 emailIcon.classList.add("disabled", "tooltip");
+//                 emailIcon.setAttribute("data-tooltip", "Preferred contact is phone, email disabled");
+//             } else if (submission.contact === "email") {
+//                 phoneIcon.classList.add("disabled", "tooltip");
+//                 phoneIcon.setAttribute("data-tooltip", "Preferred contact is email, phone disabled");
+//             }
+//         });
+//
+//
+//         // Toast messages for each action
+//         if (currentFilters.length && tableState.sorts.length) {
+//             closeFilterModal()
+//             closeSortModal()
+//             Toast.showToast("Filters and sorting applied successfully", "success");
+//         } else if (currentFilters.length) {
+//             closeFilterModal()
+//             Toast.showToast("Filters applied successfully", "success");
+//         } else if (currentSorts.length) {
+//             closeSortModal()
+//             Toast.showToast("Sort applied successfully", "success");
+//         } else {
+//             //Toast.showToast("Showing all results", "info");
+//             closeSortModal()
+//             closeFilterModal()
+//         }
+//
+//         renderActiveTags();
+//
+//         actionHandlers();
+//     }
+
 document.addEventListener('DOMContentLoaded', async () => {
     const tableBody = document.querySelector("#ticketsTable tbody");
-    const closeBtn = document.querySelectorAll(".close");
     if (!tableBody) return;
-
 
     await window.storageReady;
     const storage = window.storage;
     let submissions = await storage.getSubmissions();
-    console.log(submissions);
-
-
 
     const modal = document.getElementById("modal");
     const modalBody = document.getElementById("modalBody");
-    const closeModal = document.getElementById("closeModal");
+    //const closeModal = document.getElementById("closeModal");
+
+
 
     // --- Filter & Sort State ---
-    let currentFilters = [];
-    let currentSorts = [];
+    let tableState = await storage.getTableState() || {};
+    let currentFilters = Array.isArray(tableState.filters) ? tableState.filters : [];
+    let currentSorts = Array.isArray(tableState.sorts) ? tableState.sorts : [];
+
+    // --- URL State Persistence ---
+    function saveStateToUrl() {
+        // const state = {filters: currentFilters, sorts: tableState.sorts};
+        const hash = btoa(JSON.stringify(tableState)).slice(0, 12);
+        localStorage.setItem("state_" + hash, JSON.stringify(tableState));
+        history.replaceState(null, "", location.pathname + "#s=" + hash);
+    }
+
+    function loadStateFromUrl() {
+        if (!location.hash.startsWith("#s=")) return;
+        const hash = location.hash.replace("#s=", "");
+        const json = localStorage.getItem("state_" + hash);
+        if (!json) return;
+        const state = JSON.parse(json);
+        //if (state.filters) currentFilters = state.filters;
+        //if (state.sorts) tableState.sorts = state.sorts;
+        tableState.filters = state.filters || [];
+        tableState.sorts = state.sorts || [];
+    }
+
+    loadStateFromUrl()
 
     const filterOptions = [
         {key: "fullName", label: "Full Name"},
@@ -34,52 +312,105 @@ document.addEventListener('DOMContentLoaded', async () => {
         modalBody.innerHTML = content;
         modal.style.display = "block";
     }
+    function closeModal() {
+        modal.style.display = "none";
+    }
 
-    closeModal.onclick = () => modal.style.display = "none";
+    // closeModal.onclick = () => modal.style.display = "none";
     window.onclick = (e) => {
         if (e.target === modal) modal.style.display = "none";
     };
 
-    // --- URL State Persistence ---
-    function saveStateToUrl() {
-        const state = {filters: currentFilters, sorts: currentSorts};
-        const hash = btoa(JSON.stringify(state)).slice(0, 12);
-        localStorage.setItem("state_" + hash, JSON.stringify(state));
-        history.replaceState(null, "", location.pathname + "#s=" + hash);
+    const filterContainer = document.getElementById("filterContainer");
+    const sortContainer = document.getElementById("sortContainer");
+
+    // --- Active Tags Rendering ---
+    function renderActiveTags() {
+        const filterCount = currentFilters.length;
+        const sortCount = currentSorts.length;
+
+        filterContainer.innerHTML = filterCount > 0
+            ? `<div class="active-tag" data-type="filter">
+                <div class="tag-number">
+                    <span class="total-tags">${filterCount}</span>
+                    <span class="tag-type">Filter${filterCount > 1 ? 's' : ''}</span>
+                </div>
+                <div class="delete-tag" data-type="filter">
+                    <i class="fa-solid fa-close"></i>
+                </div>
+           </div>`
+            : `<div class="filter-icon">
+                <svg width="20" height="18" viewBox="0 0 18 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M3 7H15V5H3M0 0V2H18V0M7 12H11V10H7V12Z" fill="#DB8A74"/>
+                </svg>
+                <span> Filter</span>
+           </div>`;
+
+        sortContainer.innerHTML = sortCount > 0
+            ? `<div class="active-tag" data-type="sort">
+                <div class="tag-number">
+                    <span class="total-tags">${sortCount}</span>
+                    <span class="tag-type">Sort${sortCount > 1 ? 's' : ''}</span>
+                </div>
+                <div class="delete-tag" data-type="sort">
+                    <i class="fa-solid fa-close"></i>
+                </div>
+           </div>`
+            : `<div class="sort-icon">
+                <svg width="20" height="18" viewBox="0 0 20 18" fill="black" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M16 18L12 14H15V4H12L16 0L20 4H17V14H20M0 16V14H10V16M0 10V8H7V10M0 4V2H4V4H0Z" fill="#DB8A74"/>
+                </svg>
+                <span> Sort </span>
+           </div>`;
     }
 
-    function loadStateFromUrl() {
-        if (!location.hash.startsWith("#s=")) return;
-        const hash = location.hash.replace("#s=", "");
-        const json = localStorage.getItem("state_" + hash);
-        if (!json) return;
-        const state = JSON.parse(json);
-        if (state.filters) currentFilters = state.filters;
-        if (state.sorts) currentSorts = state.sorts;
-    }
+    // --- Event Delegation ---
+    document.addEventListener('click', e => {
 
-    loadStateFromUrl();
+        // Delete single filter/sort
+        if (e.target.closest('.delete-tag')) {
+            e.stopPropagation(); // Prevent modal opening
+            const type = e.target.closest('.delete-tag').dataset.type;
+            if (type === 'filter') currentFilters = [];
+            else if (type === 'sort') currentSorts = [];
 
-    // --- Table Rendering with filters & sorts ---
+            renderActiveTags();
+            renderTable();
+            return;
+        }
+
+        // Open Filter Modal
+        if (e.target.closest('.filter-icon')) {
+            openFilterModal();
+        }
+
+        // Open Sort Modal
+        if (e.target.closest('.sort-icon')) {
+            openSortModal();
+        }
+    });
+
+    // --- Table Rendering ---
     function renderTable() {
-        let filtered = [...submissions];
+        const cached = submissions.map(item => {
+            let lc = {};
+            for (let key in item) lc[key] = (item[key] || "").toString().toLowerCase();
+            return {original: item, lc};
+        });
 
-        // Apply filters
-        currentFilters.forEach(f => {
-            filtered = filtered.filter(item => {
-                const cell = (item[f.field] || "").toString().toLowerCase();
-                return f.operator === "contains"
-                    ? cell.includes(f.value.toLowerCase())
-                    : cell === f.value.toLowerCase();
+        let filtered = cached.filter(({lc}) => {
+            return currentFilters.every(f => {
+                const cell = lc[f.field];
+                const value = f.value.toLowerCase();
+                return f.operator === "contains" ? cell.includes(value) : cell === value;
             });
         });
 
-        // Apply sorts
         if (currentSorts.length) {
             filtered.sort((a, b) => {
                 for (let rule of currentSorts) {
-                    let v1 = (a[rule.field] || "").toString().toLowerCase();
-                    let v2 = (b[rule.field] || "").toString().toLowerCase();
+                    const v1 = a.lc[rule.field];
+                    const v2 = b.lc[rule.field];
                     if (v1 < v2) return rule.order === "asc" ? -1 : 1;
                     if (v1 > v2) return rule.order === "asc" ? 1 : -1;
                 }
@@ -87,7 +418,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             });
         }
 
-        // Render rows
+        filtered = filtered.map(x => x.original);
+
         tableBody.innerHTML = "";
         filtered.forEach(submission => {
             const row = document.createElement("tr");
@@ -113,10 +445,32 @@ document.addEventListener('DOMContentLoaded', async () => {
                 </td>
             `;
             tableBody.appendChild(row);
+            // Rendering the active selected preferred contact
+            document.querySelectorAll("td.actions").forEach(cell => {
+            const id = parseInt(cell.querySelector(".info").dataset.id);
+            const submission = submissions.find(sub => sub.id === id);
+
+            const phoneIcon = cell.querySelector(".call");
+            const emailIcon = cell.querySelector(".message");
+
+            // Reset first (important if re-rendering)
+            phoneIcon.classList.remove("disabled", "tooltip");
+            emailIcon.classList.remove("disabled", "tooltip");
+            phoneIcon.removeAttribute("data-tooltip");
+            emailIcon.removeAttribute("data-tooltip");
+
+            if (submission.contact === "phone") {
+                emailIcon.classList.add("disabled", "tooltip");
+                emailIcon.setAttribute("data-tooltip", "Preferred contact is phone, email disabled");
+            } else if (submission.contact === "email") {
+                phoneIcon.classList.add("disabled", "tooltip");
+                phoneIcon.setAttribute("data-tooltip", "Preferred contact is email, phone disabled");
+            }
+        });
         });
 
         // Toast messages for each action
-        if (currentFilters.length && currentSorts.length) {
+        if (currentFilters.length && tableState.sorts.length) {
             closeFilterModal()
             closeSortModal()
             Toast.showToast("Filters and sorting applied successfully", "success");
@@ -127,12 +481,13 @@ document.addEventListener('DOMContentLoaded', async () => {
             closeSortModal()
             Toast.showToast("Sort applied successfully", "success");
         } else {
+            //Toast.showToast("Showing all results", "info");
             closeSortModal()
             closeFilterModal()
-            Toast.showToast("Showing all results", "info");
         }
 
-        actionHandlers();
+        renderActiveTags();
+        actionHandlers(); // Your existing handlers for info, call, message, edit, delete
     }
 
     // --- Filter Modal Logic ---
@@ -210,6 +565,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         saveStateToUrl();
         renderTable();
         filterModal.style.display = "none";
+        filterOverlay.style.display = "none";
     }
 
     function resetFilters() {
@@ -276,7 +632,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             </span>
         `;
         sortsContainer.appendChild(row);
-        Toast.showToast("Table sorted successfully", "success");
+        // Toast.showToast("Table sorted successfully", "success");
     }
 
     function submitSorts() {
@@ -289,6 +645,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         saveStateToUrl();
         renderTable();
         sortModal.style.display = "none";
+        sortOverlay.style.display = "none";
     }
 
     function resetSorts() {
@@ -299,8 +656,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     document.querySelector(".sort-icon").addEventListener("click", openSortModal);
-    // document.getElementById("applySorts").addEventListener("click", submitSorts);
-    // document.getElementById("resetSorts").addEventListener("click", resetSorts);
 
     // Attach handlers
     function actionHandlers() {
@@ -327,7 +682,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const index = submissions.findIndex(sub => sub.id === id);
                 const sub = submissions[index]
                 openModal(`
-                                    <h3 class="info-header">Call</h3>
+                                  <h3 class="info-header">Call</h3>
                                    <p class="info-item">Dialing <b>${sub.fullName}</b> at <b>${sub.phone || "N/A"}</b></p>
                            `);
             });
@@ -358,85 +713,248 @@ document.addEventListener('DOMContentLoaded', async () => {
             });
         });
 
+        // Show preview + enable deleting attachments
+        function showAttachments(index) {
+            const container = document.getElementById("attachmentPreview");
+            container.innerHTML = "";
+
+            submissions[index].attachments.forEach((file, i) => {
+                const wrapper = document.createElement("div");
+                wrapper.classList.add("attachment-item");
+
+                if (file.type.startsWith("image/")) {
+                    wrapper.innerHTML = `
+                    <img src="${file.data}" alt="${file.name}" width="100">
+                    <span>${file.name}</span>
+                    <button  class="remove-attachment delete-btn" data-index="${i}">Remove</button>
+                `;
+                } else {
+                    wrapper.innerHTML = `
+                    <a href="${file.data}" download="${file.name}">${file.name}</a>
+                    <button  class="remove-attachment delete-btn" data-index="${i}">Remove</button>
+                `;
+                }
+
+                container.appendChild(wrapper);
+            });
+
+            // Attach delete handlers
+            container.querySelectorAll(".remove-attachment").forEach(btn => {
+                btn.addEventListener("click", (e) => {
+                    const fileIndex = parseInt(e.target.dataset.index, 10);
+
+                    // Remove selected attachment
+                    submissions[index].attachments.splice(fileIndex, 1);
+
+                    // Save immediately
+                    storage.saveSubmissions(submissions[index]);
+                    Toast.showToast("File deleted successfully", "success")
+                    // Re-render preview
+                    showAttachments(index);
+                });
+            });
+        }
+
         document.querySelectorAll(".edit").forEach(icon => {
             icon.addEventListener("click", (e) => {
                 const id = parseInt(e.target.dataset.id);
                 const index = submissions.findIndex(sub => sub.id === id);
                 const sub = submissions[index];
+
                 openModal(`
-                       <h3 class="info-header">Edit Ticket</h3>
-                       <form id="editTicketForm">
-                            <div class="form-row">
-                                <label class="form-label" for="editName">Full Name:</label>
-                                <input type="text" id="editName" name="fullName" value="${sub.fullName}">
-                            </div>
-                        
-                            <div class="form-row">
-                                <label class="form-label" for="editEmail">Email Address:</label>
-                                <input type="email" id="editEmail" name="email" value="${sub.email}">
-                            </div>
-                        
-                            <div class="form-row">
-                                <label class="form-label" for="editPhone">Phone Number:</label>
-                                <input type="tel" id="editPhone" name="phone" value="${sub.phone}">
-                            </div>
-                        
-                            <div class="form-row">
-                                <label class="form-label" for="editSubject">Subject:</label>
-                                <select id="editSubject" name="subject">
-                                    <option value="Web Development" ${sub.subject === "Web Development" ? "selected" : ""}>Web Development</option>
-                                    <option value="App Development" ${sub.subject === "App Development" ? "selected" : ""}>App Development</option>
-                                    <option value="Other" ${sub.subject === "Other" ? "selected" : ""}>Other</option>
-                                </select>
-                            </div>
-                        
-                            <div class="form-row">
-                                <label class="form-label" for="editMessage">Message:</label>
-                                <textarea id="editMessage" name="message" rows="6">${sub.message}</textarea>
-                            </div>
-                        
-                            <div class="form-row">
-                                <label class="form-label" for="editContact">Preferred Contact:</label>
-                                <label class="form-check">
-                                    <input type="radio" name="contact" value="email" ${sub.contact === "email" ? "checked" : ""}>
-                                    Email
-                                </label>
-                                <label class="form-check">
-                                    <input type="radio" name="contact" value="phone" ${sub.contact === "phone" ? "checked" : ""}>
-                                    Phone
-                                </label>
-                            </div>
-                        
-                            <div class="form-row">
-                                <label class="form-label" for="editStatus">Status:</label>
-                                <select id="editStatus" name="status">
-                                    <option value="Open" ${sub.status === "Open" ? "selected" : ""}>Open</option>
-                                    <option value="Closed" ${sub.status === "Closed" ? "selected" : ""}>Closed</option>
-                                    <option value="Pending" ${sub.status === "Pending" ? "selected" : ""}>Pending</option>
-                                </select>
-                            </div>
-                        
-                            <div class="form-row">
-                            <button type="button" class="btn btn-primary" id="saveEdit">Save</button>
+                    <h3 class="info-header">Edit Ticket</h3>
+                     <form id="editTicketForm" data-id="${id}">
+                    <!-- Full Name -->
+                    <div class="form-row">
+                        <label class="form-label" for="editName">Full Name:</label>
+                        <div class="form-field">
+                            <input type="text" id="editName" name="fullName" value="${sub.fullName}">
+                            <span class="error-message" id="editNameError"></span>
                         </div>
-                        </form>
-                        `);
-                document.getElementById("saveEdit").onclick = () => {
-                    const id = parseInt(e.target.dataset.id);
-                    const index = submissions.findIndex(sub => sub.id === id);
-                    submissions[index].fullName = document.getElementById("editName").value;
-                    submissions[index].email = document.getElementById("editEmail").value;
-                    submissions[index].subject = document.getElementById("editSubject").value;
-                    submissions[index].message = document.getElementById("editMessage").value;
-                    submissions[index].status = document.getElementById("editStatus").value;
-                    submissions[index].contact = document.querySelector('input[name="contact"]:checked').value;
-                    localStorage.setItem("submissions", JSON.stringify(submissions));
+                    </div>
+                
+                    <!-- Email -->
+                    <div class="form-row">
+                        <label class="form-label" for="editEmail">Email Address:</label>
+                        <div class="form-field">
+                            <input type="email" id="editEmail" name="email" value="${sub.email}">
+                            <span class="error-message" id="editEmailError"></span>
+                        </div>
+                    </div>
+                
+                    <!-- Phone -->
+                    <div class="form-row">
+                        <label class="form-label" for="editPhone">Phone Number:</label>
+                        <div class="form-field">
+                            <input type="tel" id="editPhone" name="phone" value="${sub.phone}">
+                            <span class="error-message" id="editPhoneError"></span>
+                        </div>
+                    </div>
+                
+                    <!-- Subject -->
+                    <div class="form-row">
+                        <label class="form-label" for="editSubject">Subject:</label>
+                        <div class="form-field">
+                            <select id="editSubject" name="subject">
+                                <option value="Web Development" ${sub.subject === "Web Development" ? "selected" : ""}>Web Development</option>
+                                <option value="App Development" ${sub.subject === "App Development" ? "selected" : ""}>App Development</option>
+                                <option value="Other" ${sub.subject === "Other" ? "selected" : ""}>Other</option>
+                            </select>
+                            <span class="error-message" id="editSubjectError"></span>
+                        </div>
+                    </div>
+                
+                    <!-- Message -->
+                    <div class="form-row">
+                        <label class="form-label" for="editMessage">Message:</label>
+                        <div class="form-field">
+                            <textarea id="editMessage" name="message" rows="6">${sub.message}</textarea>
+                            <small class="error-message" id="editMessageError"></small>
+                        </div>
+                    </div>
+                
+                    <!-- Preferred Contact -->
+                    <div class="form-row">
+                        <label class="form-label">Preferred Contact:</label>
+                        <label class="">
+                            <input type="radio" name="contact" value="email" ${sub.contact === "email" ? "checked" : ""}>
+                            Email
+                        </label>
+                        <label class="">
+                            <input type="radio" name="contact" value="phone" ${sub.contact === "phone" ? "checked" : ""}>
+                            Phone
+                        </label>
+                        <span class="error-message" id="editContactError"></span>
+                    </div>
+                
+                    <!-- File Upload -->
+                    <div class="form-row">
+                        <label class="form-label" for="editAttachment">Attachments:</label>
+                        <div class="form-field">
+                            <input 
+                                type="file" 
+                                id="editAttachment" 
+                                name="attachment" 
+                                class="form-control" 
+                                multiple accept=".pdf,image/png,image/jpeg,image/jpg"
+                            >
+                            <div class="form-hints">
+                                <span class="help-text">Only PDF, images (.jpeg, .jpg, .png) up to 1MB.</span>
+                                <span class="error-message" id="editAttachmentError"></span>
+                            </div>
+                            <div id="attachmentPreview"></div>
+                        </div>
+                    </div>  
+                
+                    <!-- Status -->
+                    <div class="form-row">
+                        <label class="form-label" for="editStatus">Status:</label>
+                        <div class="form-field">
+                            <select id="editStatus" name="status">
+                                <option value="Open" ${sub.status === "Open" ? "selected" : ""}>Open</option>
+                                <option value="Closed" ${sub.status === "Closed" ? "selected" : ""}>Closed</option>
+                                <option value="Pending" ${sub.status === "Pending" ? "selected" : ""}>Pending</option>
+                            </select>
+                            <span class="error-message" id="editStatusError"></span>
+                        </div>
+                    </div>
+                
+                    <!-- Save -->
+                    <div class="form-row">
+                        <button type="submit" class="btn btn-primary">Save</button>
+                    </div>
+                   </form>
+                 `);
+
+                // Show existing attachments in preview
+                showAttachments(index);
+
+                // 2Form now exists in the DOM
+                const editForm = document.getElementById("editTicketForm");
+
+                // Initialize validation and submit handling
+                window.initFormValidation(editForm, async (form) => {
+                    const formData = new FormData(form);
+                    let attachments = submissions[index].attachments || [];
+
+                    if (form.editAttachment && form.editAttachment.files.length > 0) {
+                        const files = Array.from(form.editAttachment.files);
+                        const newAttachments = await Promise.all(files.map(file => {
+                            return new Promise(resolve => {
+                                const reader = new FileReader();
+                                reader.onload = () => resolve({ name: file.name, type: file.type, data: reader.result });
+                                reader.readAsDataURL(file);
+                            });
+                        }));
+
+                        // Append new files to existing attachments
+                        attachments = attachments.concat(newAttachments);
+                    }
+
+
+                    submissions[index] = {
+                        ...submissions[index],
+                        fullName: formData.get("fullName"),
+                        email: formData.get("email"),
+                        phone: formData.get("phone"),
+                        subject: formData.get("subject"),
+                        message: formData.get("message"),
+                        contact: formData.get("contact"),
+                        attachments,
+                        status: formData.get("status")
+                    };
+
+                    await storage.saveSubmissions(submissions);
+                    Toast.showToast("Ticket updated successfully!", "success");
                     renderTable();
                     modal.style.display = "none";
-                };
-
+                });
             });
         });
+        // Save button handler
+                // document.getElementById("saveEdit").onclick = () => {
+                //     submissions[index].fullName = document.getElementById("editName").value;
+                //     submissions[index].email = document.getElementById("editEmail").value;
+                //     submissions[index].phone = document.getElementById("editPhone").value;
+                //     submissions[index].subject = document.getElementById("editSubject").value;
+                //     submissions[index].message = document.getElementById("editMessage").value;
+                //     submissions[index].status = document.getElementById("editStatus").value;
+                //     submissions[index].contact = document.querySelector('input[name="contact"]:checked').value;
+                //
+                //     // Handle new file uploads (append to existing attachments)
+                //     const fileInput = document.getElementById("editAttachment");
+                //     if (fileInput.files.length > 0) {
+                //         const files = Array.from(fileInput.files);
+                //         const promises = files.map(file => {
+                //             return new Promise(resolve => {
+                //                 const reader = new FileReader();
+                //                 reader.onload = () => {
+                //                     resolve({
+                //                         name: file.name,
+                //                         type: file.type,
+                //                         data: reader.result
+                //                     });
+                //                 };
+                //                 reader.readAsDataURL(file);
+                //             });
+                //         });
+                //
+                //         Promise.all(promises).then(results => {
+                //             submissions[index].attachments.push(...results);
+                //             storage.saveSubmissions("submissions", JSON.stringify(submissions));
+                //             renderTable();
+                //             Toast.showToast("Form edited successfully", "success");
+                //             modal.style.display = "none";
+                //         });
+                //     } else {
+                //         // No new files, just save edits
+                //         storage.saveSubmissions("submissions", JSON.stringify(submissions));
+                //         renderTable();
+                //         Toast.showToast("Form edited successfully", "success");
+                //         modal.style.display = "none";
+                //     }
+                // };
+
         document.querySelectorAll(".download").forEach(icon => {
             icon.addEventListener("click", (e) => {
                 const id = parseInt(e.target.dataset.id);
@@ -614,37 +1132,59 @@ document.addEventListener('DOMContentLoaded', async () => {
         //     });
         // });
 
+        // Delete submission
+        function deleteSubmission(id) {
+            const index = submissions.findIndex(sub => sub.id === id);
+
+            if (index !== -1) {
+                submissions.splice(index, 1);
+                storage.saveSubmissions("submissions", JSON.stringify(submissions));
+                renderTable();
+                Toast.showToast("Ticket deleted Successfully!", "success");
+            } else {
+                Toast.showToast("Ticket not found.", "error");
+            }
+        }
 
         document.querySelectorAll(".delete").forEach(icon => {
             icon.addEventListener("click", (e) => {
                 const id = parseInt(e.target.dataset.id);
-                const confirmed = confirm("Are you sure you want to delete this?")
-                if (confirmed) {
-                    // Find the index of the item with this ID
-                    const index = submissions.findIndex(sub => sub.id === id);
 
-                    // Non-negative index
-                    if (index !== -1) {
-                        submissions.splice(index, 1); // remove that item
-                        localStorage.setItem("submissions", JSON.stringify(submissions));
-                        renderTable();
-                        Toast.showToast("Ticket deleted Successfully!", "success");
-                        // alert("Ticket deleted successfully!");
-                    } else {
-                        Toast.showToast("Ticket not found.", "error");
-                        // alert("Ticket not found!");
-                    }
-                }
-            })
-        })
+                openModal(`
+                    <div>
+                        <div>
+                            <p class="info-header">Are you sure you want to delete?</p>
+                        </div>
+                        <div class="delete-confirmation"> 
+                            <button id="cancelBtn" class="btn ">Cancel</button>
+                            <button class="confirm-delete btn delete-btn " data-id="${id}">Yes</button> 
+                        </div>
+                    </div>
+                `);
+                const cancelBtn = document.getElementById("cancelBtn");
+                // Attach handlers after modal opens
+                cancelBtn.addEventListener("click", closeModal)
+                document.querySelector(".confirm-delete").addEventListener("click", (ev) => {
+                    const submissionId = parseInt(ev.target.dataset.id);
+                    deleteSubmission(submissionId);
+                    closeModal()
+                });
+            });
+        });
+
     }
 
     // Close modals
-    closeBtn.forEach(btn => {
-        btn.addEventListener("click", () => {
-            btn.closest(".modal").style.display = "none";
-        });
+    document.addEventListener('click', (e) => {
+        const closeBtn = e.target.closest('.close');
+        if (closeBtn) {
+            const modal = closeBtn.closest('.modal');
+            if (modal) modal.style.display = 'none';
+            sortOverlay.style.display = 'none';
+            filterOverlay.style.display = 'none';
+        }
     });
+
 
 
     // Refresh Icon
