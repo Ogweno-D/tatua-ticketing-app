@@ -21,3 +21,57 @@
 .actions i { cursor: pointer; color: #666; }
 .actions i:hover { color: #000; }
 .actions .fa-trash-alt, .actions .delete { color: #e63946; }
+
+
+
+
+
+/* On to p of the  table*/
+/* Active Tags Container */
+.active-tags-container {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+}
+
+/* Active Filter/Sort Tag */
+.active-tag {
+    background-color: #e63946; /* red */
+    color: #fff;
+    padding: 2px 6px;
+    border-radius: 4px;
+    display: inline-flex;
+    align-items: center;
+    font-size: 0.9rem;
+    cursor: default;
+    opacity: 0;
+    transform: translateY(-10px);
+    animation: fadeInUp 0.3s forwards;
+}
+
+/* Remove Icon */
+.active-tag .remove-tag {
+    margin-left: 4px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+/* Animation for tag appearance */
+@keyframes fadeInUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeOutDown {
+    to {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+}
+
+/* Optional: Add fade-out class */
+.active-tag.fade-out {
+    animation: fadeOutDown 0.3s forwards;
+}
