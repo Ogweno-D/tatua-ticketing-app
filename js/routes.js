@@ -31,9 +31,8 @@ let selectedStorageType = localStorage.getItem("selectedStorageType") || STORAGE
 
 // --- Initialize storage ---
 let storage = createStorage(selectedStorageType);
-storage.saveSubmissions(storageDataCache[selectedStorageType].submissions);
-storage.saveFilters(storageDataCache[selectedStorageType].filters);
-storage.saveSorts(storageDataCache[selectedStorageType].sorts);
+await storage.saveSubmissions(storageDataCache[selectedStorageType].submissions);
+await storage.saveTableState(storageDataCache[selectedStorageType].tableState);
 
 // --- Update storage label ---
 function updateStorageLabel() {
@@ -52,8 +51,8 @@ function saveMemoryCache() {
 function switchStorage() {
     // Save current state to cache
     storageDataCache[selectedStorageType].submissions = storage.getSubmissions();
-    storageDataCache[selectedStorageType].filters = storage.getFilters();
-    storageDataCache[selectedStorageType].sorts = storage.getSorts();
+    storageDataCache[selectedStorageType].filters = storage.getTableState();
+
 
     saveMemoryCache(); // persist Memory storage
 
@@ -69,8 +68,7 @@ function switchStorage() {
 
     // Reload state from cache
     storage.saveSubmissions(storageDataCache[selectedStorageType].submissions);
-    storage.saveFilters(storageDataCache[selectedStorageType].filters);
-    storage.saveSorts(storageDataCache[selectedStorageType].sorts);
+   storage.saveTableState(storageDataCache[selectedStorageType].tableState);
 
     updateStorageLabel();
 
@@ -80,8 +78,8 @@ function switchStorage() {
 
 // --- Determine storage from route folder ---
 function router() {
-    const path = window.location.pathname; // e.g., "/local/index.html"
-    const folder = path.split("/")[1]; // "local"
+    const path = window.location.pathname;
+    const folder = path.split("/")[1];
     const routeStorage = Object.values(STORAGE_TYPES).find(
         t => t.toLowerCase() === folder.toLowerCase()
     );
@@ -90,10 +88,9 @@ function router() {
         localStorage.setItem("selectedStorageType", selectedStorageType);
         storage = createStorage(selectedStorageType);
         storage.saveSubmissions(storageDataCache[selectedStorageType].submissions);
-        storage.saveFilters(storageDataCache[selectedStorageType].filters);
-        storage.saveSorts(storageDataCache[selectedStorageType].sorts);
+        storage.saveTableState(storageDataCache[selectedStorageType].tableState);
+        updateStorageLabel();
     }
-    updateStorageLabel();
 }
 
 // --- Listen to DOM load ---

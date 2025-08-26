@@ -247,11 +247,10 @@ class StorageHandler {
     async getSubmissions() { throw new Error("getSubmissions() not implemented"); }
     async saveSubmissions(subs) { throw new Error("saveSubmissions() not implemented"); }
 
-    async getFilters() { throw new Error("getFilters() not implemented"); }
-    async saveFilters(filters) { throw new Error("saveFilters() not implemented"); }
+    // NEW unified state
+    async getTableState() { throw new Error("getTableState() not implemented"); }
+    async saveTableState(state) { throw new Error("saveTableState() not implemented"); }
 
-    async getSorts() { throw new Error("getSorts() not implemented"); }
-    async saveSorts(sorts) { throw new Error("saveSorts() not implemented"); }
 
     // async getNextId() {
     //     const subs = await this.getSubmissions();
@@ -274,7 +273,7 @@ class StorageHandler {
 class EncryptedStorageHandler extends StorageHandler {
     constructor(storage) {
         super();
-        this.storage = storage; // localStorage or sessionStorage
+        this.storage = storage;
     }
 
     // --- Helper: Get encrypted item and decrypt ---
@@ -315,6 +314,23 @@ class EncryptedStorageHandler extends StorageHandler {
         }
     }
 
+    // Unified state
+    async getTableState() {
+        const raw = this.storage.getItem("tableState");
+        if (!raw) return { filters: [], sorts: [] }; // default empty object
+        try {
+            return JSON.parse(raw);
+        } catch (err) {
+            console.error("Failed to parse tableState:", err);
+            return { filters: [], sorts: [] };
+        }
+    }
+
+
+    async saveTableState(state) {
+        await this.setItem("tableState", state);
+    }
+
 }
 
 
@@ -325,18 +341,18 @@ class InMemoryStorage extends StorageHandler {
     constructor() {
         super();
         this.submissions = [];
-        this.filters = [];
-        this.sorts = [];
+        this.tableState = {filters:[], sorts:[]};
+
     }
 
     async getSubmissions() { return this.submissions; }
     async saveSubmissions(subs) { this.submissions = subs; }
 
-    async getFilters() { return this.filters; }
-    async saveFilters(filters) { this.filters = filters; }
+    async getTableState() { return this.tableState; }
+    async saveTableState(state) {
+        this.tableState = state;
+    }
 
-    async getSorts() { return this.sorts; }
-    async saveSorts(sorts) { this.sorts = sorts; }
 }
 
 // ===============================
@@ -350,11 +366,11 @@ class SessionStorageHandler extends EncryptedStorageHandler {
     async getSubmissions() { return await this.getItem("submissions"); }
     async saveSubmissions(subs) { await this.setItem("submissions", subs); }
 
-    async getFilters() { return await this.getItem("filters"); }
-    async saveFilters(filters) { await this.setItem("filters", filters); }
+    async getTableState() { return await super.getTableState(); }
+    async saveTableState(state) {
+        await this.setItem("tableState", state);
+    }
 
-    async getSorts() { return await this.getItem("sorts"); }
-    async saveSorts(sorts) { await this.setItem("sorts", sorts); }
 }
 
 // ===============================
@@ -367,11 +383,10 @@ class LocalStorageHandler extends EncryptedStorageHandler {
     async getSubmissions() { return  await this.getItem("submissions")}
     async saveSubmissions(subs) { return await  this.setItem("submissions", subs); }
 
-    async getFilters() {  return  await this.getItem("filters") }
-    async saveFilters(filters) { return await  this.setItem("filters", filters);  }
-
-    async getSorts() { return await  this.getItem("sorts"); }
-    async saveSorts(sorts) { return await this.setItem("sorts", sorts); }
+    async getTableState() { return await super.getTableState(); }
+    async saveTableState(state) {
+        await this.setItem("tableState", state);
+    }
 }
 
 // ===============================
@@ -406,21 +421,20 @@ const storageDataCache = {};
 async function initStorageCache() {
     storageDataCache[STORAGE_TYPES.LOCAL] = {
         submissions: await new LocalStorageHandler().getSubmissions(),
-        filters: await new LocalStorageHandler().getFilters(),
-        sorts: await new LocalStorageHandler().getSorts()
+        tableState: await new LocalStorageHandler().getTableState()
     };
 
     storageDataCache[STORAGE_TYPES.SESSION] = {
         submissions: await new SessionStorageHandler().getSubmissions(),
-        filters: await new SessionStorageHandler().getFilters(),
-        sorts: await new SessionStorageHandler().getSorts()
+        tableState: await new LocalStorageHandler().getTableState()
     };
 
     storageDataCache[STORAGE_TYPES.MEMORY] =
         JSON.parse(localStorage.getItem("memoryStorageCache")) || {
             submissions: [],
-            filters: [],
-            sorts: []
+            tableState:{
+                filters :[], sorts:[]
+            }
         };
 }
 
@@ -446,8 +460,8 @@ function saveMemoryCache() {
 
     // Restore cached state
     await storage.saveSubmissions(storageDataCache[selectedStorageType].submissions);
-    await storage.saveFilters(storageDataCache[selectedStorageType].filters);
-    await storage.saveSorts(storageDataCache[selectedStorageType].sorts);
+    await storage.saveTableState(storageDataCache[selectedStorageType].tableState);
+
 
     // DOM Elements
     const toggleBtn = document.getElementById("toggleStorageBtn");
@@ -459,8 +473,7 @@ function saveMemoryCache() {
 
         // Save current state into cache
         storageDataCache[selectedStorageType].submissions = await storage.getSubmissions();
-        storageDataCache[selectedStorageType].filters = await storage.getFilters();
-        storageDataCache[selectedStorageType].sorts = await storage.getSorts();
+        storageDataCache[selectedStorageType].tableState = await storage.getTableState();
 
         if (selectedStorageType === STORAGE_TYPES.MEMORY) saveMemoryCache();
 
@@ -485,9 +498,7 @@ function saveMemoryCache() {
 
         // Restore from cache
         await storage.saveSubmissions(storageDataCache[selectedStorageType].submissions);
-        await storage.saveFilters(storageDataCache[selectedStorageType].filters);
-        await storage.saveSorts(storageDataCache[selectedStorageType].sorts);
-
+        await storage.saveTableState(storageDataCache[selectedStorageType].tableState);
         // Update UI
         currentLabel.textContent = selectedStorageType;
 
@@ -515,9 +526,7 @@ window.storageReady = (async function setupStorage() {
     window.storage = storage;
 
     await storage.saveSubmissions(storageDataCache[selectedStorageType].submissions);
-    await storage.saveFilters(storageDataCache[selectedStorageType].filters);
-    await storage.saveSorts(storageDataCache[selectedStorageType].sorts);
-
+    await storage.saveTableState(storageDataCache[selectedStorageType].tableState);
     return storage; // resolve with storage
 })();
 
