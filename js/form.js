@@ -216,7 +216,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (!formField) return;
 
         const icon = formField.querySelector(".error-icon");
-        console.log(icon, hasError);
+        // console.log(icon, hasError);
         if (hasError) {
             field.classList.add("input-error");
             if (icon) icon.style.display = "inline";
@@ -233,11 +233,18 @@ document.addEventListener("DOMContentLoaded", async () => {
         const errorElement = formField.querySelector('.error-message');
         if (!errorElement) return true;
 
+        // if pristine, don't show errors yet
+        if (!field.dataset.touched) {
+            toggleInputError(field, false);
+            return true;
+        }
+
         errorElement.textContent = "";
         let valid = true;
 
         // Full Name
-        if (field.id === "fullName" && (field.value.trim() === "" || field.value.trim().length <= 4)) {
+        if ((field.id === "fullName" || field.id === "editName") &&
+            (field.value.trim() === "" || field.value.trim().length <= 4)) {
             errorElement.textContent = "Full Name must be at least 5 characters.";
             valid = false;
         }
@@ -294,6 +301,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
 
+
     function validateRadioGroup(form) {
         const contactRadios = form.querySelectorAll("input[name='contact']");
         const errorElement = form.querySelector("#editContactError"); // make sure id matches!
@@ -328,11 +336,19 @@ document.addEventListener("DOMContentLoaded", async () => {
         // live validation
         inputs.forEach(input => {
             input.addEventListener("blur", () => {
+                input.dataset.touched = "true";
                 if (input.type !== "checkbox" && input.type !== "radio") {
                     validateField(input);
                 }
             });
+
+            input.addEventListener("input", () => {
+                if (input.dataset.touched) {
+                    validateField(input);
+                }
+            });
         });
+
 
         // on submit
         form.addEventListener("submit", (e) => {

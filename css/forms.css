@@ -132,19 +132,19 @@ input[type="radio"] {
     width: 100%;
 }
 
-/* Generic wrapper */
+/* */
 .form-field {
     position: relative;
     display: inline-block;
     width: 100%;
 }
 
-/* Error styles for inputs, selects, textareas */
+/*  */
 .form-field input.input-error,
 .form-field select.input-error,
 .form-field textarea.input-error {
-    border: 2px solid var(--error) !important;
-    background-color: #ffe5e9 !important;
+    border: 2px solid var(--error) ;
+    background-color: #ffe5e9;
     padding-right: 2rem;
 }
 
@@ -158,7 +158,10 @@ input[type="radio"] {
     pointer-events: none;
     display: none;
 }
-
+.form-field > .error-icon,
+.form-field i.error-icon {
+    color: red !important;
+}
 
 .form-field textarea ~ .error-icon {
     top: 1rem;

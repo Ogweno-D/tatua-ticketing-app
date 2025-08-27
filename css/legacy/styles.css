@@ -817,27 +817,114 @@ td::before {
     transform: translateX(100%);
 }
 
-/* Input Error*/
-/*TODO:: Make this better*/
-.form-field{
+/* */
+.form-field {
     position: relative;
     display: inline-block;
     width: 100%;
 }
-.form-field input.input-error {
-    border: 2px solid #e63946 !important;
-    background-color: #ffe5e9 !important;
+/*  */
+.form-field input.input-error,
+.form-field select.input-error,
+.form-field textarea.input-error {
+    border: 2px solid var(--error) ;
+    background-color: #ffe5e9;
     padding-right: 2rem;
 }
-.form-field  .error-icon{
-   position: absolute;
-   right: 8px;
-   top: 50%;
-   transform: translateY(-50%);
-   font-size: 1rem;
-   pointer-events: none;
+
+.form-field .error-icon {
+    position: absolute;
+    right: 8px;
+    top:1.2rem;
+    transform: translateY(-50%);
+    font-size: 1rem;
+    color: red;
+    pointer-events: none;
+    display: none;
+}
+.form-field > .error-icon,
+.form-field i.error-icon {
+    color: red !important;
 }
 
+
+.form-field textarea ~ .error-icon {
+    top: 1rem;
+    transform: none;
+}
+
+/* File input: keep the icon aligned right */
+.form-field input[type="file"] ~ .error-icon {
+    top: 0.8rem;
+    transform: none;
+}
+
+/* Radios & checkboxes (icons below group, left aligned) */
+.form-field input[type="radio"] ~ .error-icon,
+.form-field input[type="checkbox"] ~ .error-icon {
+    position: static;
+    margin-left: 0.5rem;
+    transform: none;
+    vertical-align: middle;
+}
+/* Delete modal container */
+.delete-modal {
+    text-align: center;
+    padding: 1.5em;
+    max-width: 400px;
+    margin: auto;
+}
+
+/* Header text inside delete modal */
+.delete-modal .info-header {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: black;
+    margin-bottom: 1.5em;
+}
+
+/* Confirmation buttons wrapper */
+.delete-modal .delete-confirmation {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1em;
+}
+
+/* Cancel button */
+.delete-modal .btn {
+    min-width: 100px;
+    padding: 0.5em 1em;
+    font-size: 0.95rem;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+/* Cancel button (neutral) */
+.delete-modal #cancelBtn {
+    background-color: rebeccapurple;
+    border: 1px solid #ccc;
+    color: white;
+}
+
+/* Confirm delete button (danger) */
+.delete-modal .delete-btn {
+    background-color: #d9534f;
+    border: 1px solid #c9302c;
+    color: white;
+}
+.delete-modal .delete-btn:hover {
+    background-color: #c9302c;
+}
+
+.delete-confirmation {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-medium);
+}
 
 
 /*

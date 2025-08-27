@@ -43,13 +43,58 @@
     margin-bottom: var(--spacing-medium);
 }
 
+/* Delete modal container */
 .delete-modal {
-    width: 70%;
-    max-width: 300px;
+    text-align: center;
+    padding: 1.5em;
+    max-width: 400px;
+    margin: auto;
 }
 
-.modal.delete #closeModal {
-    display: none;
+/* Header text inside delete modal */
+.delete-modal .info-header {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: black;
+    margin-bottom: 1.5em;
+}
+
+/* Confirmation buttons wrapper */
+.delete-modal .delete-confirmation {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1em;
+}
+
+/* Cancel button */
+.delete-modal .btn {
+    min-width: 100px;
+    padding: 0.6em 1.2em;
+    font-size: 0.95rem;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+/* Cancel button (neutral) */
+.delete-modal #cancelBtn {
+    background-color: #e5e5e5;
+    border: 1px solid #ccc;
+    color: #333;
+}
+.delete-modal #cancelBtn:hover {
+    background-color: #dcdcdc;
+}
+
+/* Confirm delete button (danger) */
+.delete-modal .delete-btn {
+    background-color: #d9534f;
+    border: 1px solid #c9302c;
+    color: white;
+}
+.delete-modal .delete-btn:hover {
+    background-color: #c9302c;
 }
 
 .delete-confirmation {

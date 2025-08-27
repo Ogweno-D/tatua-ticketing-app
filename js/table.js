@@ -323,6 +323,21 @@ document.addEventListener('DOMContentLoaded', async () => {
         modalBody.innerHTML = content
         modal.style.display = "block";
 
+        // Remove any errors before being submitted/touched
+        modalBody.querySelectorAll(".error-icon").forEach(icon => icon.style.display = "none");
+        modalBody.querySelectorAll(".input-error").forEach(el => el.classList.remove("input-error"));
+
+        //Build them automatically later
+        modalBody.querySelectorAll(".form-field").forEach(field => {
+            if (!field.querySelector(".error-icon")) {
+                const icon = document.createElement("i");
+                icon.className = "fa-solid fa-exclamation-circle error-icon";
+                console.log(icon);
+                field.insertBefore(icon, field.querySelector(".error-message"));
+            }
+        });
+
+
         if (isDelete) {
             modal.classList.add("delete");
             closeBtn.style.display = "none";
@@ -602,7 +617,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const sortModal = document.getElementById("sortModal");
     const sortsContainer = document.getElementById("sortsContainer");
     const sortOverlay = document.getElementById("sortOverlay");
-    console.log(sortOverlay);
+    // console.log(sortOverlay);
 
     function openSortModal() {
         if (sortOverlay) {
@@ -781,108 +796,112 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const sub = submissions[index];
 
                 openModal(`
-                    <h3 class="info-header">Edit Ticket</h3>
-                     <form id="editTicketForm" data-id="${id}">
-                    <!-- Full Name -->
-                    <div class="form-row">
-                        <label class="form-label" for="editName">Full Name:</label>
-                        <div class="form-field">
-                            <input type="text" id="editName" name="fullName" value="${sub.fullName}">
-                            <span class="error-message" id="editNameError"></span>
-                        </div>
-                    </div>
-                
-                    <!-- Email -->
-                    <div class="form-row">
-                        <label class="form-label" for="editEmail">Email Address:</label>
-                        <div class="form-field">
-                            <input type="email" id="editEmail" name="email" value="${sub.email}">
-                            <span class="error-message" id="editEmailError"></span>
-                        </div>
-                    </div>
-                
-                    <!-- Phone -->
-                    <div class="form-row">
+                  <h3 class="info-header">Edit Ticket</h3>
+                 <form id="editTicketForm" data-id="${id}">
+  <!-- Full Name -->
+  <div class="form-row">
+    <label class="form-label" for="editName">Full Name:</label>
+    <div class="form-field">
+      <input type="text" id="editName" name="fullName" value="${sub.fullName}">
+      <i class="fa-solid fa-circle-exclamation error-icon"></i>
+      <span class="error-message" id="editNameError"></span>
+    </div>
+  </div>
+
+  <!-- Email -->
+  <div class="form-row">
+    <label class="form-label" for="editEmail">Email Address:</label>
+    <div class="form-field">
+      <input type="email" id="editEmail" name="email" value="${sub.email}">
+      <i class="fa-solid fa-circle-exclamation error-icon"></i>
+      <span class="error-message" id="editEmailError"></span>
+    </div>
+  </div>
+
+                      <!-- Phone -->
+                      <div class="form-row">
                         <label class="form-label" for="editPhone">Phone Number:</label>
                         <div class="form-field">
-                            <input type="tel" id="editPhone" name="phone" value="${sub.phone}">
-                            <span class="error-message" id="editPhoneError"></span>
+                          <input type="tel" id="editPhone" name="phone" value="${sub.phone}">
+                          <i class="fa-solid fa-circle-exclamation error-icon"></i>
+                          <span class="error-message" id="editPhoneError"></span>
                         </div>
-                    </div>
-                
-                    <!-- Subject -->
-                    <div class="form-row">
+                      </div>
+                    
+                      <!-- Subject -->
+                      <div class="form-row">
                         <label class="form-label" for="editSubject">Subject:</label>
                         <div class="form-field">
-                            <select id="editSubject" name="subject">
-                                <option value="Web Development" ${sub.subject === "Web Development" ? "selected" : ""}>Web Development</option>
-                                <option value="App Development" ${sub.subject === "App Development" ? "selected" : ""}>App Development</option>
-                                <option value="Other" ${sub.subject === "Other" ? "selected" : ""}>Other</option>
-                            </select>
-                            <span class="error-message" id="editSubjectError"></span>
+                          <select id="editSubject" name="subject">
+                            <option value="Web Development" ${sub.subject === "Web Development" ? "selected" : ""}>Web Development</option>
+                            <option value="App Development" ${sub.subject === "App Development" ? "selected" : ""}>App Development</option>
+                            <option value="Other" ${sub.subject === "Other" ? "selected" : ""}>Other</option>
+                          </select>
+                          <i class="fa-solid fa-circle-exclamation error-icon"></i>
+                          <span class="error-message" id="editSubjectError"></span>
                         </div>
-                    </div>
-                
-                    <!-- Message -->
-                    <div class="form-row">
+                      </div>
+                    
+                      <!-- Message -->
+                      <div class="form-row">
                         <label class="form-label" for="editMessage">Message:</label>
                         <div class="form-field">
-                            <textarea id="editMessage" name="message" rows="6">${sub.message}</textarea>
-                            <small class="error-message" id="editMessageError"></small>
+                          <textarea id="editMessage" name="message" rows="6">${sub.message}</textarea>
+                          <i class="fa-solid fa-circle-exclamation error-icon"></i>
+                          <small class="error-message" id="editMessageError"></small>
                         </div>
-                    </div>
-                
-                    <!-- Preferred Contact -->
-                    <div class="form-row">
+                      </div>
+                    
+                      <!-- Preferred Contact -->
+                      <div class="form-row">
                         <label class="form-label">Preferred Contact:</label>
-                        <label class="">
-                            <input type="radio" name="contact" value="email" ${sub.contact === "email" ? "checked" : ""}>
-                            Email
-                        </label>
-                        <label class="">
-                            <input type="radio" name="contact" value="phone" ${sub.contact === "phone" ? "checked" : ""}>
-                            Phone
-                        </label>
-                        <span class="error-message" id="editContactError"></span>
-                    </div>
-                
-                    <!-- File Upload -->
-                    <div class="form-row">
+                        <div class="form-field">
+                          <label>
+                            <input type="radio" name="contact" value="email" ${sub.contact === "email" ? "checked" : ""}> Email
+                          </label>
+                          <label>
+                            <input type="radio" name="contact" value="phone" ${sub.contact === "phone" ? "checked" : ""}> Phone
+                          </label>
+                          <i class="fa-solid fa-circle-exclamation error-icon"></i>
+                          <span class="error-message" id="editContactError"></span>
+                        </div>
+                      </div>
+                    
+                      <!-- File Upload -->
+                      <div class="form-row">
                         <label class="form-label" for="editAttachment">Attachments:</label>
                         <div class="form-field">
-                            <input 
-                                type="file" 
-                                id="editAttachment" 
-                                name="attachment" 
-                                class="form-control" 
-                                multiple accept=".pdf,image/png,image/jpeg,image/jpg"
-                            >
-                            <div class="form-hints">
-                                <span class="help-text">Only PDF, images (.jpeg, .jpg, .png) up to 1MB.</span>
-                                <span class="error-message" id="editAttachmentError"></span>
-                            </div>
-                            <div id="attachmentPreview"></div>
+                          <input type="file" id="editAttachment" name="attachment" multiple accept=".pdf,image/png,image/jpeg,image/jpg">
+                          <i class="fa-solid fa-circle-exclamation error-icon"></i>
+                          <div class="form-hints">
+                            <span class="help-text">Only PDF, images (.jpeg, .jpg, .png) up to 1MB.</span>
+                            <span class="error-message" id="editAttachmentError"></span>
+                          </div>
+                          <div id="attachmentPreview"></div>
                         </div>
-                    </div>  
-                
-                    <!-- Status -->
-                    <div class="form-row">
+                      </div>  
+                    
+                      <!-- Status -->
+                      <div class="form-row">
                         <label class="form-label" for="editStatus">Status:</label>
                         <div class="form-field">
-                            <select id="editStatus" name="status">
-                                <option value="Open" ${sub.status === "Open" ? "selected" : ""}>Open</option>
-                                <option value="Closed" ${sub.status === "Closed" ? "selected" : ""}>Closed</option>
-                                <option value="Pending" ${sub.status === "Pending" ? "selected" : ""}>Pending</option>
-                            </select>
-                            <span class="error-message" id="editStatusError"></span>
+                          <select id="editStatus" name="status">
+                            <option value="Open" ${sub.status === "Open" ? "selected" : ""}>Open</option>
+                            <option value="Closed" ${sub.status === "Closed" ? "selected" : ""}>Closed</option>
+                            <option value="Pending" ${sub.status === "Pending" ? "selected" : ""}>Pending</option>
+                          </select>
+                          <i class="fa-solid fa-circle-exclamation error-icon"></i>
+                          <span class="error-message" id="editStatusError"></span>
                         </div>
-                    </div>
-                
-                    <!-- Save -->
-                    <div class="form-row">
+                      </div>
+                    
+                      <!-- Save -->
+                      <div class="form-btn">
                         <button type="submit" class="btn btn-primary">Save</button>
-                    </div>
-                   </form>
+                        <button type="reset" class="btn btn-secondary">Clear</button>
+                      </div>
+                    </form>
+
                  `);
 
                 // Show existing attachments in preview
