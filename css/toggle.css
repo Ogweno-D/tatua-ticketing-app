@@ -1,0 +1,14 @@
+.toggle-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.storage-toggle {
+    position: absolute;
+    top: 2rem;
+    right: 1rem;
+    gap: var(--spacing-small);
+    margin: var(--spacing-medium);
+}

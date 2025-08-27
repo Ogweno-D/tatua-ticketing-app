@@ -1,13 +1,10 @@
-/*
-Responsive Breakpoints
-*/
 /* Tablet (>=768px) */
 @media (min-width: 768px) {
-    .trial-nav {
+    .navbar {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        gap: 1rem;
+        gap: var(--spacing-medium);
     }
 
     .navbar-nav {
@@ -24,7 +21,7 @@ Responsive Breakpoints
     }
 
     .nav-link a:hover {
-        color: #a683ca;
+        color: var(--link-hover);
         text-decoration: none;
     }
 
@@ -35,7 +32,7 @@ Responsive Breakpoints
     .form-row {
         flex-direction: row;
         flex-wrap: wrap;
-        gap: 1rem;
+        gap: var(--spacing-medium);
     }
 
     .form-field {
@@ -57,21 +54,19 @@ Responsive Breakpoints
         margin: auto 0.8rem;
     }
 
-    .form-hints{
+    .form-hints {
         display: flex;
-        flex-direction: column  ;
-        margin-top: .5rem;
+        flex-direction: column;
+        margin-top: 0.5rem;
         font-size: 0.85rem;
     }
 
-    .form-btn{
+    .form-btn {
         display: flex;
         gap: 2rem;
         padding: 0.5rem 0;
-
     }
 
-    /* Tickets table view */
     .tickets-container {
         padding: 2em;
         margin: auto;
@@ -79,8 +74,8 @@ Responsive Breakpoints
 
     .tickets-table thead {
         display: table-header-group;
-        color: hsl(270, 23%, 40%);
-        border-bottom: 3px solid hsl(270, 23%, 40%);
+        color: var(--primary);
+        border-bottom: 3px solid var(--primary);
     }
 
     .tickets-table tr {
@@ -94,7 +89,7 @@ Responsive Breakpoints
     .tickets-table th {
         font-size: 1.5rem;
         font-weight: 600;
-        border-bottom: 4px solid hsl(270, 23%, 40%);
+        border-bottom: 4px solid var(--primary);
         text-align: left;
     }
 

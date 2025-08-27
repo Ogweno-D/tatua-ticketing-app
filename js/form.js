@@ -211,12 +211,26 @@ document.addEventListener("DOMContentLoaded", async () => {
     let submissions = await storage.getSubmissions();
 
     // ------------------ VALIDATION HELPERS ------------------ //
-    function toggleInputError(field, showError) {
-        field.classList.toggle("input-error", showError);
+    function toggleInputError(field, hasError) {
+        const formField = field.closest(".form-field");
+        if (!formField) return;
+
+        const icon = formField.querySelector(".error-icon");
+        console.log(icon, hasError);
+        if (hasError) {
+            field.classList.add("input-error");
+            if (icon) icon.style.display = "inline";
+        } else {
+            field.classList.remove("input-error");
+            if (icon) icon.style.display = "none";
+        }
     }
 
     function validateField(field) {
-        const errorElement = field.closest('.form-field')?.querySelector('.error-message');
+        const formField = field.closest('.form-field');
+        if (!formField) return true;
+
+        const errorElement = formField.querySelector('.error-message');
         if (!errorElement) return true;
 
         errorElement.textContent = "";
@@ -278,6 +292,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         toggleInputError(field, !valid);
         return valid;
     }
+
 
     function validateRadioGroup(form) {
         const contactRadios = form.querySelectorAll("input[name='contact']");

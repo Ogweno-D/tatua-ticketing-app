@@ -5,7 +5,8 @@
     <title>Tatua Ticketing App | Home</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Styles -->
-    <link rel="stylesheet" href="../../styles.css">
+    <link rel="stylesheet" href="./../../main.css">
+    <link rel="stylesheet" href="../../assets/icons/css/all.min.css">
 </head>
 <body>
 
@@ -61,6 +62,7 @@
                 <label class="form-label" for="fullName">Full Name:</label>
                 <div class="form-field">
                     <input type="text" name="fullName" id="fullName" placeholder="">
+                    <i class="fa-solid fa-circle-exclamation error-icon"></i>
                     <span class="error-message" id="fullNameError"></span>
                 </div>
             </div>
@@ -70,6 +72,7 @@
                 <label class="form-label" for="email">Email Address:</label>
                 <div class="form-field">
                     <input type="email" name="email" id="email" placeholder="">
+                    <i class="fa-solid fa-circle-exclamation error-icon"></i>
                     <span class="error-message" id="emailError"></span>
                 </div>
             </div>
@@ -79,6 +82,7 @@
                 <label class="form-label" for="phone">Phone Number:</label>
                 <div class="form-field">
                     <input type="tel" name="phone" id="phone" placeholder="">
+                    <i class="fa-solid fa-circle-exclamation error-icon"></i>
                     <span class="error-message" id="phoneError"></span>
                 </div>
             </div>
@@ -93,6 +97,7 @@
                         <option value="App Development">App Development</option>
                         <option value="Other">Other</option>
                     </select>
+                    <i class="fa-solid fa-circle-exclamation error-icon"></i>
                     <span class="error-message" id="subjectError"></span>
                 </div>
             </div>
@@ -102,6 +107,7 @@
                 <label class="form-label" for="message">Message:</label>
                 <div class="form-field">
                     <textarea name="message" id="message" rows="6"></textarea>
+                    <i class="fa-solid fa-circle-exclamation error-icon"></i>
                     <small class="error-message" id="messageError"></small>
                 </div>
             </div>
@@ -109,22 +115,26 @@
             <!-- Preferred Contact -->
             <div class="form-row">
                 <label class="form-label">Preferred Contact:</label>
-                <label class="">
-                    <input type="radio" name="contact" id="email-contact" value="email">
-                    Email
-                </label>
-                <label class="">
-                    <input type="radio" name="contact" id="phone-contact" value="phone">
-                    Phone
-                </label>
-                <span class="error-message" id="contactError"></span>
+                <div class="form-field">
+                    <label>
+                        <input type="radio" name="contact" id="email-contact" value="email">
+                        Email
+                    </label>
+                    <label>
+                        <input type="radio" name="contact" id="phone-contact" value="phone">
+                        Phone
+                    </label>
+                    <i class="fa-solid fa-circle-exclamation error-icon"></i>
+                    <span class="error-message" id="contactError"></span>
+                </div>
             </div>
 
             <!-- File Upload -->
             <div class="form-row">
                 <label class="form-label" for="attachment">Attachments:</label>
                 <div class="form-field">
-                    <input type="file" id="attachment" name="attachment" class="form-control" multiple>
+                    <input type="file" id="attachment" name="attachment" class="form-control" multiple accept=".pdf,image/png,image/jpeg,image/jpg">
+                    <i class="fa-solid fa-circle-exclamation error-icon"></i>
                     <div class="form-hints">
                         <span class="help-text">Only PDF, images (.jpeg, .jpg, .png) up to 1MB.</span>
                         <span class="error-message" id="attachmentError"></span>
@@ -133,11 +143,12 @@
             </div>
 
             <!-- Terms & Conditions -->
-            <div class="t-c">
+            <div class="t-c form-field">
                 <label>
                     <input type="checkbox" name="terms" id="terms" value="Agree">
                     I agree to the <a href="#">Terms and Conditions</a>
                 </label>
+                <i class="fa-solid fa-circle-exclamation error-icon"></i>
                 <small class="error-message" id="termsError"></small>
             </div>
 
@@ -147,13 +158,10 @@
                 <input class="btn btn-primary" type="reset" value="Clear">
             </div>
 
-            <!-- Clear -->
-            <div>
-            </div>
         </form>
     </section>
 
-        <!-- Storage Toggler-->
+    <!-- Storage Toggler-->
     <section class="toggle-container">
         <div class="storage-toggle">
             <button id="toggleStorageBtn" class="btn-toggle">
@@ -163,6 +171,7 @@
         </div>
     </section>
 </main>
+
 
 <!-- Scripts -->
 <!--<script src="main.js"></script>-->

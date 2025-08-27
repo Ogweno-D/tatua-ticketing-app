@@ -1,0 +1,36 @@
+.navbar-nav {
+    display: none;
+    list-style: none;
+    gap: var(--spacing-medium);
+    flex-direction: column;
+    background-color: var(--secondary);
+    padding: var(--spacing-medium);
+    margin: 0;
+}
+
+.navbar-nav.show {
+    display: flex;
+}
+
+.nav-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: auto 2rem;
+    padding: 1em;
+}
+
+.nav-link a {
+    color: var(--white);
+    text-align: center;
+    transition: color var(--transition);
+}
+
+.nav-link a:hover {
+    color: var(--link-hover);
+    text-decoration: none;
+}
+
+.nav-link a.active {
+    color: var(--link-active);
+}

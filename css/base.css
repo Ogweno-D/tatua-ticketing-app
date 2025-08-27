@@ -9,11 +9,10 @@
 }
 
 body {
-    background-color: var(--bg-color);
-    font-family: var(--font-main);
-    font-size: 16px;
+    background-color: var(--light-gray);
+    font-family: var(--font-family), serif;
+    font-size: var(--font-size-base);
     width: 100%;
-    color: #333;
 }
 
 h1 {

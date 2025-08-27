@@ -308,9 +308,28 @@ document.addEventListener('DOMContentLoaded', async () => {
     ];
 
     // --- Modal helpers ---
-    function openModal(content) {
-        modalBody.innerHTML = content;
+    function openModal(content,{isDelete =false} ={}) {
+        // modalBody.innerHTML = content;
+        // modal.style.display = "block";
+        const modalTitle = document.getElementById("modalTitle")
+        const closeBtn = document.getElementById("closeModal")
+
+        // Reset Modal
+        modal.classList.remove("delete");
+        modalBody.innerHTML = "";
+        modalTitle.innerHTML =""
+
+        //New content
+        modalBody.innerHTML = content
         modal.style.display = "block";
+
+        if (isDelete) {
+            modal.classList.add("delete");
+            closeBtn.style.display = "none";
+        }else{
+            closeBtn.style.display = "block";
+        }
+
     }
     function closeModal() {
         modal.style.display = "none";
@@ -470,7 +489,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
 
         // Toast messages for each action
-        if (currentFilters.length && tableState.sorts.length) {
+        if (currentFilters.length && currentSorts.length) {
             closeFilterModal()
             closeSortModal()
             Toast.showToast("Filters and sorting applied successfully", "success");
@@ -1148,11 +1167,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         document.querySelectorAll(".delete").forEach(icon => {
             icon.addEventListener("click", (e) => {
-                const id = parseInt(e.target.dataset.id);
+                const id = parseInt(e.currentTarget.dataset.id);
 
                 openModal(`
-                    <div>
-                        <div>
+                    <div class="delete-modal">
+                        <div class="">
                             <p class="info-header">Are you sure you want to delete?</p>
                         </div>
                         <div class="delete-confirmation"> 
@@ -1160,7 +1179,11 @@ document.addEventListener('DOMContentLoaded', async () => {
                             <button class="confirm-delete btn delete-btn " data-id="${id}">Yes</button> 
                         </div>
                     </div>
-                `);
+                `, {isDelete: true});
+
+                // Hide the default close button for the modals
+                document.getElementById("closeModal").style.display = "none";
+
                 const cancelBtn = document.getElementById("cancelBtn");
                 // Attach handlers after modal opens
                 cancelBtn.addEventListener("click", closeModal)

@@ -1,0 +1,12 @@
+/* Info headers/Items*/
+.info-header {
+    font-size: 1.2rem;
+    text-align: center;
+    padding: 0.5em;
+    margin-bottom: 0.3rem;
+}
+
+.info-item {
+    padding: 0.5em;
+    margin: 0.5rem auto;
+}

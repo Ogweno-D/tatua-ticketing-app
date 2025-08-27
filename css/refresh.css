@@ -1,0 +1,49 @@
+.refresh-container {
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+    padding: 0.5em;
+    margin: 0.5rem auto;
+}
+
+.icons-container {
+    display: flex;
+    flex-direction: row-reverse;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: var(--spacing-medium);
+}
+
+.filter-icon, .sort-icon {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.filter-icon:hover, .sort-icon:hover {
+    cursor: pointer;
+}
+
+.refresh-icon {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-small);
+    cursor: pointer;
+    font-size: 1.3rem;
+    color: var(--accent);
+    margin: 0.5rem 2rem;
+    border: none;
+    background: none;
+}
+
+.refresh-icon a {
+    text-decoration: none;
+    color: inherit;
+}
+
+.refresh-icon:hover {
+    color: #0056b3;
+}

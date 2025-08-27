@@ -1,0 +1,77 @@
+/* All filter and sorts, active tags and trash*/
+.filter-row, .sort-row {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    padding: 0.5em;
+}
+
+.filter-row label, .sort-row label {
+    margin-bottom: 0.4rem;
+}
+
+.filter-row select, .filter-row input,
+.sort-row select {
+    padding: 0.5em;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.trash {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.3em;
+    margin-top: 1.5rem;
+    border-radius: 4px;
+    transition: background 0.2s ease;
+}
+
+.trash:hover {
+    color: darkred;
+    cursor: pointer;
+}
+
+.active-tags-container {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-small);
+    flex-wrap: wrap;
+}
+
+.active-tag {
+    background-color: var(--delete-bg);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.2rem;
+    color: var(--white);
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.tag-number {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.3rem;
+    background: var(--delete-bg);
+}
+
+.delete-tag {
+    background-color: var(--delete-dark);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    padding: 0.5rem;
+    font-size: 0.8rem;
+}
+
+.close-filter-sort {
+    color: #333;
+}
+
+.close-filter-sort:hover {
+    cursor: pointer;
+    color: var(--error);
+}

@@ -1,61 +1,181 @@
-/* ===============================
-   Forms & Buttons
-=================================*/
-.form-section { padding: 1em; margin: 1rem; }
-.form-section-msg { font-size: 1rem; color: hsl(0,1%,44%); margin-bottom: 1rem; }
-.form-row { display: flex; flex-direction: column; margin-bottom: 1rem; }
+.form-section {
+    padding: var(--spacing-medium);
+    margin: var(--spacing-medium);
+}
 
-.form-label { font-weight: 600; margin-bottom: 0.5rem; }
-input, select, textarea {
+.form-section-msg {
+    font-size: var(--font-size-base);
+    font-weight: 400;
+    color: hsl(0, 1%, 44%);
+    margin-bottom: var(--spacing-medium);
+}
+
+.form-row {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: var(--spacing-medium);
+}
+
+.form-label {
+    display: block;
+    margin-bottom: var(--spacing-small);
+    font-weight: 600;
+}
+
+.form-check {
+    margin: 0 var(--spacing-medium);
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="tel"],
+input[type="url"],
+input[type="number"],
+input[type="radio"],
+input[type="checkbox"],
+input[type="file"],
+select,
+textarea {
+    position: relative;
+    display: inline-block;
     width: 100%;
     padding: 12px 16px;
     border: 2px solid #e1e5e9;
     border-radius: 6px;
     font-size: 16px;
+    font-family: inherit;
     background-color: var(--white);
-    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    transition: border-color var(--transition), box-shadow var(--transition);
 }
-input:focus, select:focus, textarea:focus {
+
+select option[disabled] {
+    color: #999;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
     outline: none;
     border-color: hsl(270, 50%, 40%);
     box-shadow: 0 0 0 3px hsl(270, 50%, 90%);
 }
 
-input[type="checkbox"], input[type="radio"] { accent-color: var(--accent-color); }
-input[type="file"] { cursor: pointer; padding: 0.5em; }
-
-.btn, .btn-toggle, .btn-add {
-    background-color: var(--accent-color);
-    color: var(--white);
-    padding: 0.5em 1em;
-    border-radius: 20px;
-    border: none;
-    transition: all 0.3s ease;
+input[type="file"] {
+    border: 2px solid #ccc;
+    padding: 0.5em;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: var(--font-size-base);
+    font-weight: 500;
 }
-.btn:hover, .btn-toggle:hover, .btn-add:hover { background-color: var(--black); color: var(--white); }
 
-.t-c label { display: flex; align-items: center; cursor: pointer; font-size: 0.95rem; }
-.t-c input[type="checkbox"] { margin-right: 1em; width: 16px; height: 16px; }
-.t-c a { text-decoration: underline; color: rgba(66,50,117,0.9); }
-.t-c a:hover { text-decoration: none; color: hsl(270,50%,50%); }
+input[type="checkbox"],
+input[type="radio"] {
+    accent-color: var(--accent);
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
 
-/* Input Error*/
-input.input-error,
-textarea.input-error,
-select.input-error {
-    border: 2px solid #e63946 !important;
+.t-c {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: var(--spacing-medium);
+}
+
+.t-c label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    font-size: 0.95rem;
+}
+
+.t-c input[type="checkbox"] {
+    margin-right: 1em;
+    width: 16px;
+    height: 16px;
+}
+
+.t-c .error-message {
+    color: var(--error);
+    font-size: 0.85rem;
+    margin-top: 4px;
+}
+
+.t-c a {
+    margin-left: 0.2em;
+    color: rgba(66, 50, 117, 0.9);
+    text-decoration: underline;
+}
+
+.t-c a:hover {
+    color: hsl(270, 50%, 50%);
+    text-decoration: none;
+}
+
+.error-message {
+    color: var(--error);
+    font-size: 0.85rem;
+    margin-top: 4px;
+}
+
+.help-text {
+    font-size: 0.85rem;
+    color: var(--gray);
+    margin-top: 2px;
+}
+
+.form-field {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+}
+
+/* Generic wrapper */
+.form-field {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+}
+
+/* Error styles for inputs, selects, textareas */
+.form-field input.input-error,
+.form-field select.input-error,
+.form-field textarea.input-error {
+    border: 2px solid var(--error) !important;
     background-color: #ffe5e9 !important;
     padding-right: 2rem;
-    position: relative;
 }
 
-input.input-error::after,
-textarea.input-error::after,
-select.input-error::after {
-    content: "⚠️";
+.form-field .error-icon {
     position: absolute;
     right: 8px;
-    top: 50%;
+    top:1.2rem;
     transform: translateY(-50%);
     font-size: 1rem;
+    color: red;
+    pointer-events: none;
+    display: none;
+}
+
+
+.form-field textarea ~ .error-icon {
+    top: 1rem;
+    transform: none;
+}
+
+/* File input: keep the icon aligned right */
+.form-field input[type="file"] ~ .error-icon {
+    top: 0.8rem;
+    transform: none;
+}
+
+/* Radios & checkboxes (icons below group, left aligned) */
+.form-field input[type="radio"] ~ .error-icon,
+.form-field input[type="checkbox"] ~ .error-icon {
+    position: static;
+    margin-left: 0.5rem;
+    transform: none;
+    vertical-align: middle;
 }

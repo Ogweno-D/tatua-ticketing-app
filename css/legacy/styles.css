@@ -3,7 +3,7 @@
 =================================*/
 @font-face {
     font-family: 'Lexend Deca';
-    src: url('assets/fonts/LexendDeca-VariableFont_wght.ttf') format('truetype');
+    src: url('../../assets/fonts/LexendDeca-VariableFont_wght.ttf') format('truetype');
     font-style: normal;
     font-display: swap;
 }
@@ -541,8 +541,8 @@ td::before {
     margin: auto;
     padding: 1.5em;
     border-radius: 12px;
-    width: 60%;
-    max-width: 600px;
+    width: fit-content;
+    max-width: 100%;
 }
 /*.modal-body {*/
 /*    flex: 1;*/
@@ -565,11 +565,18 @@ td::before {
     right: 10px;
     gap: 10px;
 }
-
 .modal-textarea{
     width: 100%;
     resize: none;
     margin-bottom: 1rem;
+}
+
+.delete-modal{
+    width: 70%;
+    max-width: 300px;
+}
+.modal.delete #closeModal{
+    display: none;
 }
 .delete-confirmation  {
     display: flex;
@@ -678,11 +685,6 @@ td::before {
     justify-content: flex-start;
     padding: 12px 16px;
 }
-.add-row i {
-    cursor: pointer;
-    color: #007bff;
-}
-.add-row i:hover { color: #0056b3; }
 
 .style-modal-overlay {
     display: none;
@@ -780,9 +782,8 @@ td::before {
     font-size: 1.2rem;
     text-align: center;
     padding: 0.5em;
-    margin-bottom: 0.2rem;
+    margin-bottom: 0.3rem;
 }
-
 .info-item {
     padding: 0.5em;
     margin: 0.5rem auto;

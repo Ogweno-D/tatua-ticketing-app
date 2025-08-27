@@ -1,0 +1,72 @@
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--primary);
+    color: var(--white);
+    padding: 0.5em 1em;
+    border: none;
+    border-radius: 20px;
+    font-size: var(--font-size-base);
+    font-weight: 500;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all var(--transition);
+}
+
+.btn:hover {
+    background-color: var(--white);
+    color: var(--black);
+}
+
+.nav-btn, .download-btn {
+    background: var(--accent);
+    border: none;
+    border-radius: 12px;
+    color: var(--white);
+    padding: 0.5em 0.5em;
+    font-size: var(--font-size-base);
+    cursor: pointer;
+}
+
+.delete-btn {
+    color: var(--white);
+    padding: 0.2rem 0.5rem;
+    margin-left: 0.5rem;
+    background: var(--error);
+    border-radius: 12px;
+    border: 1px solid var(--error);
+    cursor: pointer;
+}
+
+.btn-add {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-small);
+    padding: 0.5rem 1rem;
+    border: none;
+    background: none;
+    border-radius: 6px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    font-size: var(--font-size-base);
+}
+
+.btn-add:hover {
+    cursor: pointer;
+}
+
+.btn-toggle {
+    padding: 0.5em;
+    background: hsl(270, 57%, 31%);
+    color: var(--white);
+    border-radius: 0.2rem;
+    font-size: var(--font-size-base);
+}
+
+.btn-toggle:hover {
+    background-color: hsl(270, 57%, 10%);
+    color: var(--white);
+    cursor: pointer;
+}
