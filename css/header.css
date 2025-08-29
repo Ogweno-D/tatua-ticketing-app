@@ -5,6 +5,7 @@
     z-index: 1000;
     color: var(--white);
     padding: 0.8em;
+    width: 100%;
 }
 
 .navbar {
