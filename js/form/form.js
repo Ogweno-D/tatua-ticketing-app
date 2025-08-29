@@ -12,7 +12,7 @@ export function initFormValidation(form, onValidSubmit) {
 
     const inputs = form.querySelectorAll("input, textarea, select");
 
-    // Live validation on blur
+    //  Live validation on blur
     inputs.forEach(input => {
         input.addEventListener("blur", () => {
             if (input.type !== "checkbox" && input.type !== "radio") {
@@ -20,32 +20,42 @@ export function initFormValidation(form, onValidSubmit) {
             }
         });
     });
-
-    // Form submission
-    form.addEventListener("submit", (e) => {
-        e.preventDefault();
+    function validateForm(form) {
+        const inputs = form.querySelectorAll("input, textarea, select");
         let isValid = true;
 
         inputs.forEach(input => {
-            if (input.type !== "radio" && input.type !== "checkbox") {
-                if (!validateField(input)) isValid = false;
-            }
+            if (["radio","checkbox"].includes(input.type)) return;
+            if (!validateField(input)) isValid = false;
         });
+
         if (!validateRadioGroup(form)) isValid = false;
         if (!validateTerms(form)) isValid = false;
 
-        if (!isValid) {
+        return isValid;
+    }
+
+
+    // Form submission
+    form.addEventListener("submit", e => {
+        e.preventDefault();
+        if (!validateForm(form)) {
             showToast("Please fix errors before submitting.", "warning");
             return;
         }
-
         onValidSubmit(form);
     });
 }
+async  function setUpForms(storage){
+    const ticketForm = document.getElementById('ticketForm');
+    if (ticketForm){
+        initFormValidation(ticketForm, form=>
+            saveSubmission(form,submissions,storage,showToast)
+        );
+    }
 
-/**
- * Initializes ticket and edit forms.
- */
+}
+
 document.addEventListener("DOMContentLoaded", async () => {
     await window.storageReady;
     const storage = window.storage;
@@ -56,17 +66,18 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     let submissions = await storage.getSubmissions();
 
-    // Initialize ticket form
-    const ticketForm = document.getElementById("ticketForm");
-    if (ticketForm) {
-        initFormValidation(ticketForm, form => saveSubmission(form, submissions, storage, showToast));
-    }
-
-    // Initialize edit form (if present, handled dynamically by actions.js)
-    const editForm = document.getElementById("editTicketForm");
-    if (editForm) {
-        initFormValidation(editForm, form => saveEditSubmission(form, submissions, storage, showToast));
-    }
+    await setUpForms(storage, submissions);
+    // // Initialize ticket form
+    // const ticketForm = document.getElementById("ticketForm");
+    // if (ticketForm) {
+    //     initFormValidation(ticketForm, form => saveSubmission(form, submissions, storage, showToast));
+    // }
+    //
+    // // Initialize edit form (if present, handled dynamically by actions.js)
+    // const editForm = document.getElementById("editTicketForm");
+    // if (editForm) {
+    //     initFormValidation(editForm, form => saveEditSubmission(form, submissions, storage, showToast));
+    // }
 
     // Expose globals for compatibility with actions.js
     window.initFormValidation = initFormValidation;

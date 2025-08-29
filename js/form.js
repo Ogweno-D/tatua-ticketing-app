@@ -304,7 +304,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     function validateRadioGroup(form) {
         const contactRadios = form.querySelectorAll("input[name='contact']");
-        const errorElement = form.querySelector("#editContactError"); // make sure id matches!
+        const errorElement = form.querySelector("#editContactError");
         let checked = [...contactRadios].some(radio => radio.checked);
 
         if (!checked) {
@@ -318,7 +318,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     function validateTerms(form) {
         const terms = form.querySelector("#terms");
-        const errorElement = form.querySelector("#editTermsError"); // make sure id matches!
+        const errorElement = form.querySelector("#editTermsError");
         if (terms && !terms.checked) {
             if (errorElement) errorElement.textContent = "You must agree to the terms.";
             return false;

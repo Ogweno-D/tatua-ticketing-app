@@ -426,7 +426,7 @@ async function initStorageCache() {
 
     storageDataCache[STORAGE_TYPES.SESSION] = {
         submissions: await new SessionStorageHandler().getSubmissions(),
-        tableState: await new LocalStorageHandler().getTableState()
+        tableState: await new SessionStorageHandler().getTableState()
     };
 
     storageDataCache[STORAGE_TYPES.MEMORY] =
@@ -525,8 +525,16 @@ window.storageReady = (async function setupStorage() {
     window.selectedStorageType = selectedStorageType;
     window.storage = storage;
 
-    await storage.saveSubmissions(storageDataCache[selectedStorageType].submissions);
-    await storage.saveTableState(storageDataCache[selectedStorageType].tableState);
+    const cachedSubs = storageDataCache[selectedStorageType].submissions;
+    const cachedState = storageDataCache[selectedStorageType].tableState;
+
+    if (cachedSubs && cachedSubs.length > 0) {
+        await storage.saveSubmissions(cachedSubs);
+    }
+    if (cachedState && (cachedState.filters?.length || cachedState.sorts?.length)) {
+        await storage.saveTableState(cachedState);
+    }
+
     return storage; // resolve with storage
 })();
 
