@@ -1,263 +1,7 @@
-// document.addEventListener('DOMContentLoaded', async () => {
-//     const tableBody = document.querySelector("#ticketsTable tbody");
-//     const closeBtn = document.querySelectorAll(".close");
-//     const container = document.querySelector(".active-tags-container");
-//     console.log(container);
-//     if (!tableBody) return;
-//
-//
-//     await window.storageReady;
-//     const storage = window.storage;
-//     let submissions = await storage.getSubmissions();
-//     console.log(submissions);
-//
-//
-//
-//     const modal = document.getElementById("modal");
-//     const modalBody = document.getElementById("modalBody");
-//     //const closeModal = document.getElementById("closeModal");
-//
-//     // --- Filter & Sort State ---
-//     let tableState = await storage.getTableState() || {};
-//     let currentFilters = Array.isArray(tableState.filters) ? tableState.filters : [];
-//     let currentSorts   = Array.isArray(tableState.sorts)   ? tableState.sorts   : [];
-//
-//
-//
-//     const filterOptions = [
-//         {key: "fullName", label: "Full Name"},
-//         {key: "email", label: "Email"},
-//         {key: "phone", label: "Phone"},
-//         {key: "subject", label: "Subject"},
-//         {key: "message", label: "Message"},
-//         {key: "contact", label: "Contact"},
-//         {key: "status", label: "Status"}
-//     ];
-//
-//     // --- Modal helpers ---
-//     function openModal(content) {
-//         modalBody.innerHTML = content;
-//         modal.style.display = "block";
-//     }
-//     function closeModal() {
-//         modal.style.display = "none";
-//     }
-//
-//     // closeModal.onclick = () => modal.style.display = "none";
-//     window.onclick = (e) => {
-//         if (e.target === modal) modal.style.display = "none";
-//     };
-//
-//     // --- URL State Persistence ---
-//     function saveStateToUrl() {
-//         // const state = {filters: currentFilters, sorts: tableState.sorts};
-//         const hash = btoa(JSON.stringify(tableState)).slice(0, 12);
-//         localStorage.setItem("state_" + hash, JSON.stringify(tableState));
-//         history.replaceState(null, "", location.pathname + "#s=" + hash);
-//     }
-//
-//     function loadStateFromUrl() {
-//         if (!location.hash.startsWith("#s=")) return;
-//         const hash = location.hash.replace("#s=", "");
-//         const json = localStorage.getItem("state_" + hash);
-//         if (!json) return;
-//         const state = JSON.parse(json);
-//         //if (state.filters) currentFilters = state.filters;
-//         //if (state.sorts) tableState.sorts = state.sorts;
-//         tableState.filters = state.filters || [];
-//         tableState.sorts = state.sorts || [];
-//     }
-//
-//     loadStateFromUrl();
-//     function renderActiveTags() {
-//         const filterContainer = document.getElementById("filterContainer");
-//         const sortContainer = document.getElementById("sortContainer");
-//
-//         filterContainer.innerHTML = '';
-//         currentFilters.forEach((f, i) => {
-//             const tag = document.createElement('div');
-//             tag.className = 'active-tag';
-//             tag.innerHTML = `
-//             <div class="tag-number">
-//                 <span class="total-tags">1</span>
-//                 <span class="tag-type">Filter</span>
-//             </div>
-//             <div class="delete-tag" data-type="filter" data-index="${i}">
-//                 <i class="fa-solid fa-close"></i>
-//             </div>
-//         `;
-//             filterContainer.appendChild(tag);
-//         });
-//
-//         sortContainer.innerHTML = '';
-//         currentSorts.forEach((s, i) => {
-//             const tag = document.createElement('div');
-//             tag.className = 'active-tag';
-//             tag.innerHTML = `
-//             <div class="tag-number">
-//                 <span class="total-tags">1</span>
-//                 <span class="tag-type">Sort</span>
-//             </div>
-//             <div class="delete-tag" data-type="sort" data-index="${i}">
-//                 <i class="fa-solid fa-close"></i>
-//             </div>
-//         `;
-//             sortContainer.appendChild(tag);
-//         });
-//
-//         // Add event listeners dynamically
-//         document.querySelectorAll('.delete-tag').forEach(el => {
-//             el.addEventListener('click', () => {
-//                 const type = el.dataset.type;
-//                 const index = parseInt(el.dataset.index, 10);
-//
-//                 if (type === 'filter') currentFilters.splice(index, 1);
-//                 else if (type === 'sort') currentSorts.splice(index, 1);
-//
-//                 renderActiveTags();
-//                 renderTable();
-//             });
-//         });
-//     }
-//
-//
-//
-//     // --- Table Rendering with filters & sorts ---
-//     function renderTable() {
-//         // let filtered = [...submissions];
-//
-//         // // Apply filters
-//         // tableState.filters.forEach(f => {
-//         //     filtered = filtered.filter(item => {
-//         //         const cell = (item[f.field] || "").toString().toLowerCase();
-//         //         return f.operator === "contains"
-//         //             ? cell.includes(f.value.toLowerCase())
-//         //             : cell === f.value.toLowerCase();
-//         //     });
-//         // });
-//         //
-//         // // Apply sorts
-//         // if (tableState.sorts.length) {
-//         //     filtered.sort((a, b) => {
-//         //         for (let rule of tableState.sorts) {
-//         //             let v1 = (a[rule.field] || "").toString().toLowerCase();
-//         //             let v2 = (b[rule.field] || "").toString().toLowerCase();
-//         //             if (v1 < v2) return rule.order === "asc" ? -1 : 1;
-//         //             if (v1 > v2) return rule.order === "asc" ? 1 : -1;
-//         //         }
-//         //         return 0;
-//         //     });
-//         // }
-//
-//         const cached = submissions.map(item=>{
-//             let lc = {};
-//             for(let key in item){
-//                 lc[key] =(item[key] || "").toString().toLowerCase();
-//             }
-//             return {original:item,lc};
-//         })
-//
-//         // Filters
-//         let filtered = cached.filter(({lc})=>{
-//            return currentFilters.every(f=>{
-//                const cell = lc[f.field];
-//                const value = f.value.toLowerCase();
-//
-//                return f.operator === "contains" ? cell.includes(value) : cell === value
-//            });
-//         });
-//
-//         if(currentSorts.length ){
-//             filtered.sort((a,b)=>{
-//                 for(let rule of currentSorts){
-//                     const v1 = a.lc[rule.field];
-//                     const v2 = b.lc[rule.field];
-//
-//                     if(v1<v2) return rule.order === "asc" ? -1:1;
-//                     if(v1>v2) return  rule.order === "asc" ? 1:-1;
-//                 }
-//                 return 0;
-//             })
-//         }
-//
-//         filtered = filtered.map(x=>x.original);
-//
-//         // Render rows
-//         tableBody.innerHTML = "";
-//         filtered.forEach(submission => {
-//             const row = document.createElement("tr");
-//             row.innerHTML = `
-//                 <td>${submission.id}</td>
-//                 <td>
-//                     <p class="user-name">${submission.fullName}</p>
-//                     <p class="user-email">${submission.email}</p>
-//                 </td>
-//                 <td>
-//                     <p class="message-title">${submission.subject}</p>
-//                     <p class="user-message">${submission.message}</p>
-//                 </td>
-//                 <td>${submission.date}</td>
-//                 <td><span class="status ${submission.status.toLowerCase()}">${submission.status}</span></td>
-//                 <td class="actions">
-//                     <i class="fa-solid fa-info-circle info" data-id="${submission.id}"></i>
-//                     <i class="fa-solid fa-download download" data-id="${submission.id}"></i>
-//                     <i class="fa-solid fa-phone call" data-id="${submission.id}"></i>
-//                     <i class="fa-regular fa-envelope message" data-id="${submission.id}"></i>
-//                     <i class="fa-regular fa-pen-to-square edit" data-id="${submission.id}"></i>
-//                     <i class="fa-solid fa-trash-alt delete" data-id="${submission.id}"></i>
-//                 </td>
-//             `;
-//             tableBody.appendChild(row);
-//         });
-//
-//         // Rendering the active selected preferred contact
-//         document.querySelectorAll("td.actions").forEach(cell => {
-//             const id = parseInt(cell.querySelector(".info").dataset.id);
-//             const submission = submissions.find(sub => sub.id === id);
-//
-//             const phoneIcon = cell.querySelector(".call");
-//             const emailIcon = cell.querySelector(".message");
-//
-//             // Reset first (important if re-rendering)
-//             phoneIcon.classList.remove("disabled", "tooltip");
-//             emailIcon.classList.remove("disabled", "tooltip");
-//             phoneIcon.removeAttribute("data-tooltip");
-//             emailIcon.removeAttribute("data-tooltip");
-//
-//             if (submission.contact === "phone") {
-//                 emailIcon.classList.add("disabled", "tooltip");
-//                 emailIcon.setAttribute("data-tooltip", "Preferred contact is phone, email disabled");
-//             } else if (submission.contact === "email") {
-//                 phoneIcon.classList.add("disabled", "tooltip");
-//                 phoneIcon.setAttribute("data-tooltip", "Preferred contact is email, phone disabled");
-//             }
-//         });
-//
-//
-//         // Toast messages for each action
-//         if (currentFilters.length && tableState.sorts.length) {
-//             closeFilterModal()
-//             closeSortModal()
-//             Toast.showToast("Filters and sorting applied successfully", "success");
-//         } else if (currentFilters.length) {
-//             closeFilterModal()
-//             Toast.showToast("Filters applied successfully", "success");
-//         } else if (currentSorts.length) {
-//             closeSortModal()
-//             Toast.showToast("Sort applied successfully", "success");
-//         } else {
-//             //Toast.showToast("Showing all results", "info");
-//             closeSortModal()
-//             closeFilterModal()
-//         }
-//
-//         renderActiveTags();
-//
-//         actionHandlers();
-//     }
-
 document.addEventListener('DOMContentLoaded', async () => {
-    const tableBody = document.querySelector("#ticketsTable tbody");
+    const table = document.getElementById("ticketsTable");
+    const tableBody = document.querySelector(" tbody");
+    const tableHead = document.querySelector("thead");
     if (!tableBody) return;
 
     await window.storageReady;
@@ -267,7 +11,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     const modal = document.getElementById("modal");
     const modalBody = document.getElementById("modalBody");
     //const closeModal = document.getElementById("closeModal");
-
 
 
     // --- Filter & Sort State ---
@@ -297,6 +40,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     loadStateFromUrl()
 
+    // -------Data Descriptions and Definitions -----
     const filterOptions = [
         {key: "fullName", label: "Full Name"},
         {key: "email", label: "Email"},
@@ -306,6 +50,108 @@ document.addEventListener('DOMContentLoaded', async () => {
         {key: "contact", label: "Contact"},
         {key: "status", label: "Status"}
     ];
+
+    // For each column
+    const columnsMap = {
+        id:{
+            caption: "Ticket ID",
+            type:"number",
+            isFilterable: false,
+            size:70,
+        },
+        // This one renders the name and the email
+        raised_by:{
+            isFilterable: true,
+            type:"string",
+            size:250,
+            filterBy:"email",
+            render: (data) =>{
+                return `
+                <div class="">
+                    <div class="user-name">
+                        ${data?.fullName}
+                    </div>
+                    <div class="user-email">
+                        ${data?.email}
+                    </div>
+                </div>
+                 `
+            }
+        },
+        ticket_details:{
+            isFilterable: true,
+            type:"string",
+            size:250,
+            filterBy:"subject",
+            render: (data) =>{
+                return `
+                <div class="">
+                    <div class="message-title">
+                        ${data?.subject}
+                    </div>
+                    <div class="user-message">
+                        ${data?.message}
+                    </div>
+                </div>
+               `
+            }
+        },
+        date:{
+            caption: "Date Created",
+            isFilterable: false,
+            type:"date",
+            size:150,
+        },
+        status:{
+            isSortable: true,
+            type:"date",
+            size:80,
+            render:(data) =>{
+                return `
+                <span class="status ${data.status.toLowerCase()}">${data.status}</span></td>
+`
+            }
+        },
+        // date_modified:{
+        //     isFilterable: false,
+        //     hide:true,
+        //     size:200,
+        //
+        // },
+        actions:{
+            caption: "Actions",
+            isSortable: false,
+            isFilterable: false,
+            size:200,
+            render: (data) =>{
+
+                return`
+                 <td class="actions">
+                    <i class="fa-solid fa-info-circle info" data-id="${data.id}"></i>
+                    <i class="fa-solid fa-download download" data-id="${data.id}"></i>
+                    <i class="fa-solid fa-phone call" data-id="${data.id}"></i>
+                    <i class="fa-regular fa-envelope message" data-id="${data.id}"></i>
+                    <i class="fa-regular fa-pen-to-square edit" data-id="${data.id}"></i>
+                    <i class="fa-solid fa-trash-alt delete" data-id="${data.id}"></i>
+                </td>
+           `
+            }
+
+        }
+    }
+
+    let columns = Object.entries(columnsMap).map(([columnId, columnDetails]) => {
+        return {
+            id: columnId,
+            caption: columnDetails?.caption ?? columnId.toLowerCase().split("_").map((splitStr) => splitStr.charAt(0).toUpperCase() + splitStr.slice(1)).join(" "),
+            size: columnDetails?.size ?? 100,
+            align: columnDetails?.align ?? "left",
+            isSortable: columnDetails?.isSortable ?? false,
+            isFilterable: columnDetails?.isFilterable ?? true,
+            render: columnDetails?.render,
+            hide:columnDetails?.hide ?? false,
+        }
+    })
 
     // --- Modal helpers ---
     function openModal(content,{isDelete =false} ={}) {
@@ -454,53 +300,69 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         filtered = filtered.map(x => x.original);
 
+        //clear the table
+        tableHead.innerHTML ="";
         tableBody.innerHTML = "";
+
+        const headerRow = document.createElement("tr");
+        columns.forEach((col) => {
+            if(!col.hide){
+                const th = document.createElement("th");
+                th.textContent = col.caption;
+                headerRow.appendChild(th);
+            }
+        })
+        tableHead.appendChild(headerRow);
+
+
         filtered.forEach(submission => {
             const row = document.createElement("tr");
-            row.innerHTML = `
-                <td>${submission.id}</td>
-                <td>
-                    <p class="user-name">${submission.fullName}</p>
-                    <p class="user-email">${submission.email}</p>
-                </td>
-                <td>
-                    <p class="message-title">${submission.subject}</p>
-                    <p class="user-message">${submission.message}</p>
-                </td>
-                <td>${submission.date}</td>
-                <td><span class="status ${submission.status.toLowerCase()}">${submission.status}</span></td>
-                <td class="actions">
-                    <i class="fa-solid fa-info-circle info" data-id="${submission.id}"></i>
-                    <i class="fa-solid fa-download download" data-id="${submission.id}"></i>
-                    <i class="fa-solid fa-phone call" data-id="${submission.id}"></i>
-                    <i class="fa-regular fa-envelope message" data-id="${submission.id}"></i>
-                    <i class="fa-regular fa-pen-to-square edit" data-id="${submission.id}"></i>
-                    <i class="fa-solid fa-trash-alt delete" data-id="${submission.id}"></i>
-                </td>
-            `;
+            columns.forEach(column => {
+                if(!column.type){
+                    console.log(column.type);
+                }
+                if (!column.hide) {
+                    const td = document.createElement("td");
+
+                    //If the column has a render
+                    if (column.render) {
+                        td.innerHTML = column.render(submission);
+                    } else{
+                        const rowData = submission[column.id];
+                        if (rowData) {
+                            td.textContent = rowData;
+                        } else{
+                            td.textContent ="-";
+                        }
+                    }
+
+                    // Rendering the active selected preferred contact
+                    if (column.id === "actions") {
+                        const cell = td;
+                        const id = parseInt(cell.querySelector(".info").dataset.id);
+                        const submissionData = submissions.find(sub => sub.id === id);
+
+                        const phoneIcon = cell.querySelector(".call");
+                        const emailIcon = cell.querySelector(".message");
+
+                        phoneIcon.classList.remove("disabled", "tooltip");
+                        emailIcon.classList.remove("disabled", "tooltip");
+                        phoneIcon.removeAttribute("data-tooltip");
+                        emailIcon.removeAttribute("data-tooltip");
+
+                        if (submissionData.contact === "phone") {
+                            emailIcon.classList.add("disabled", "tooltip");
+                            emailIcon.setAttribute("data-tooltip", "Preferred contact is phone, email disabled");
+                        } else if (submissionData.contact === "email") {
+                            phoneIcon.classList.add("disabled", "tooltip");
+                            phoneIcon.setAttribute("data-tooltip", "Preferred contact is email, phone disabled");
+                        }
+                    }
+
+                    row.appendChild(td);
+                }
+            });
             tableBody.appendChild(row);
-            // Rendering the active selected preferred contact
-            document.querySelectorAll("td.actions").forEach(cell => {
-            const id = parseInt(cell.querySelector(".info").dataset.id);
-            const submission = submissions.find(sub => sub.id === id);
-
-            const phoneIcon = cell.querySelector(".call");
-            const emailIcon = cell.querySelector(".message");
-
-            // Reset first (important if re-rendering)
-            phoneIcon.classList.remove("disabled", "tooltip");
-            emailIcon.classList.remove("disabled", "tooltip");
-            phoneIcon.removeAttribute("data-tooltip");
-            emailIcon.removeAttribute("data-tooltip");
-
-            if (submission.contact === "phone") {
-                emailIcon.classList.add("disabled", "tooltip");
-                emailIcon.setAttribute("data-tooltip", "Preferred contact is phone, email disabled");
-            } else if (submission.contact === "email") {
-                phoneIcon.classList.add("disabled", "tooltip");
-                phoneIcon.setAttribute("data-tooltip", "Preferred contact is email, phone disabled");
-            }
-        });
         });
 
         // Toast messages for each action
@@ -551,7 +413,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
-
     function addFilterRow() {
         const row = document.createElement("div");
         row.className = "filter-row";
@@ -569,20 +430,20 @@ document.addEventListener('DOMContentLoaded', async () => {
                     <option selected disabled> Select relation</option>
                     <option value="contains">contains</option>
                     <option value="equals">equals</option>
-                </select>   
+                </select>
              </div>
             <div>
             <label class="form-label"> Filter Value </label>
               <input type="text" class="filter-value" placeholder="Enter value">
             </div>
             <div>
-                 <span class="trash" onclick="this.parentElement.remove()"> 
+                 <span class="trash" onclick="this.parentElement.remove()">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                          <path d="M9 3V4H4V6H5V19C5 19.5304 5.21071 20.0391 5.58579 20.4142C5.96086 20.7893 6.46957 21 7 21H17C17.5304 21 18.0391 20.7893 18.4142 20.4142C18.7893 20.0391 19 19.5304 19 19V6H20V4H15V3H9ZM7 6H17V19H7V6ZM9 8V17H11V8H9ZM13 8V17H15V8H13Z" fill="#A10900"/>
                     </svg>
                 </span>
             </div>
-            
+
                    `;
         filtersContainer.appendChild(row);
 
@@ -796,27 +657,27 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const sub = submissions[index];
 
                 openModal(`
-                  <h3 class="info-header">Edit Ticket</h3>
+                 <h3 class="info-header">Edit Ticket</h3>
                  <form id="editTicketForm" data-id="${id}">
-  <!-- Full Name -->
-  <div class="form-row">
-    <label class="form-label" for="editName">Full Name:</label>
-    <div class="form-field">
-      <input type="text" id="editName" name="fullName" value="${sub.fullName}">
-      <i class="fa-solid fa-circle-exclamation error-icon"></i>
-      <span class="error-message" id="editNameError"></span>
-    </div>
-  </div>
-
-  <!-- Email -->
-  <div class="form-row">
-    <label class="form-label" for="editEmail">Email Address:</label>
-    <div class="form-field">
-      <input type="email" id="editEmail" name="email" value="${sub.email}">
-      <i class="fa-solid fa-circle-exclamation error-icon"></i>
-      <span class="error-message" id="editEmailError"></span>
-    </div>
-  </div>
+                      <!-- Full Name -->
+                      <div class="form-row">
+                        <label class="form-label" for="editName">Full Name:</label>
+                        <div class="form-field">
+                          <input type="text" id="editName" name="fullName" value="${sub.fullName}">
+                          <i class="fa-solid fa-circle-exclamation error-icon"></i>
+                          <span class="error-message" id="editNameError"></span>
+                        </div>
+                      </div>
+                    
+                      <!-- Email -->
+                      <div class="form-row">
+                        <label class="form-label" for="editEmail">Email Address:</label>
+                        <div class="form-field">
+                          <input type="email" id="editEmail" name="email" value="${sub.email}">
+                          <i class="fa-solid fa-circle-exclamation error-icon"></i>
+                          <span class="error-message" id="editEmailError"></span>
+                        </div>
+                      </div>
 
                       <!-- Phone -->
                       <div class="form-row">
@@ -1226,8 +1087,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             filterOverlay.style.display = 'none';
         }
     });
-
-
 
     // Refresh Icon
     document.querySelector(".refresh-icon").addEventListener("click", event => {
