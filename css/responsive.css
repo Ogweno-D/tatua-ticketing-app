@@ -6,6 +6,12 @@
         align-items: center;
         gap: var(--spacing-medium);
     }
+    .trial-nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem;
+    }
 
     .navbar-nav {
         display: flex;
